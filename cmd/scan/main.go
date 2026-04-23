@@ -15,11 +15,13 @@ import (
 const version = "0.3.0"
 
 var (
-	flagPath     string
-	flagSeverity string
-	flagHelp    bool
-	flagVerbose bool
-	format     string
+	flagPath      string
+	flagSeverity  string
+	flagHelp     bool
+	flagVerbose  bool
+	flagQuiet    bool
+	flagConfirm  bool
+	format      string
 )
 
 func init() {
@@ -27,7 +29,9 @@ func init() {
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
-	flag.StringVar(&format, "format", "text", "Output format: text, json, html")
+	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
+	flag.BoolVar(&flagConfirm, "y", false, "Skip confirmation prompts (auto-confirm)")
+	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif")
 	flag.Usage = usage
 }
 
@@ -40,8 +44,11 @@ func usage() {
 	fmt.Println("  polkitguard                    # Scan default locations")
 	fmt.Println("  polkitguard --path /custom/rules")
 	fmt.Println("  polkitguard --severity high    # Only show HIGH and CRITICAL")
-	fmt.Println("  polkitguard --format json    # JSON output")
+	fmt.Println("  polkitguard --format json     # JSON output")
 	fmt.Println("  polkitguard --format html    # HTML report")
+	fmt.Println("  polkitguard --format sarif    # SARIF output")
+	fmt.Println("  polkitguard -y               # Auto-confirm (non-interactive)")
+	fmt.Println("  polkitguard -q               # Quiet mode")
 }
 
 func getSeverityLevel(level string) models.Severity {
@@ -71,7 +78,9 @@ func main() {
 		})
 	}
 
-	fmt.Printf("PolkitGuard v%s - Scanning for Polkit security issues...\n\n", version)
+	if !flagQuiet {
+		fmt.Printf("PolkitGuard v%s - Scanning for Polkit security issues...\n\n", version)
+	}
 
 	var files []string
 	var err error

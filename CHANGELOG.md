@@ -2,6 +2,19 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.6.0] - Phase 3: Maturity
+
+### Added
+- GitHub Actions CI/CD workflow
+- CONTRIBUTING.md
+- CODE_OF_CONDUCT.md
+- SECURITY.md
+- Quiet mode (-q flag)
+- SARIF output format (--format sarif)
+
+### Fixed
+- Usage examples updated
+
 ## [0.5.0] - Phase 2 Complete
 
 ### Added

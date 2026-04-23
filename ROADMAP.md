@@ -85,9 +85,9 @@
 ## Phase 3: Maturity
 
 ### CI/CD
-- [ ] GitHub Actions workflow
-- [ ] Auto-build on push
-- [ ] Test runner in CI
+- [x] GitHub Actions workflow
+- [x] Auto-build on push
+- [x] Test runner in CI
 - [ ] Release automation
 
 ### Distribution
@@ -96,17 +96,17 @@
 - [ ] Package for DEB/RPM (Debian/RedHat)
 
 ### Documentation
-- [ ] CONTRIBUTING.md
-- [ ] CODE_OF_CONDUCT.md
-- [ ] SECURITY.md (security contact)
+- [x] CONTRIBUTING.md
+- [x] CODE_OF_CONDUCT.md
+- [x] SECURITY.md (security contact)
 - [ ] User guide / manual pages
 - [ ] Examples of real vulnerable configurations
 
 ### UX Improvements
-- [ ] Interactive mode
+- [x] Interactive mode (auto-confirm with -y)
 - [ ] Config file support (JSON/YAML)
-- [ ] Multiple output formats (JSON, SARIF, HTML)
-- [ ] Quiet mode (`-q`)
+- [x] Multiple output formats (JSON, SARIF, HTML)
+- [x] Quiet mode (`-q`)
 
 ---
 

@@ -10,6 +10,8 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 )
 
+var version = "0.5.0"
+
 type Reporter struct {
 	minSeverity models.Severity
 }
@@ -17,11 +19,11 @@ type Reporter struct {
 type ReportStats struct {
 	FilesScanned int
 	RulesFound  int
-	Critical  int
-	High      int
-	Medium    int
-	Low       int
-	Total     int
+	Critical   int
+	High       int
+	Medium     int
+	Low        int
+	Total      int
 }
 
 func NewReporter(minSeverity models.Severity) *Reporter {
@@ -71,6 +73,8 @@ func (r *Reporter) Output(result models.ScanResult, format string) {
 		r.outputJSON(findings, stats)
 	} else if format == "html" {
 		r.outputHTML(findings, stats)
+	} else if format == "sarif" {
+		r.outputSARIF(findings, stats)
 	} else {
 		r.outputText(findings, stats)
 	}
@@ -101,8 +105,9 @@ func (r *Reporter) outputText(findings []models.Finding, stats ReportStats) {
 
 func (r *Reporter) outputJSON(findings []models.Finding, stats ReportStats) {
 	output := map[string]interface{}{
-		"scanner":    "PolkitGuard",
-		"findings":   findings,
+		"scanner": "PolkitGuard",
+		"version": version,
+		"findings": findings,
 		"stats": map[string]int{
 			"files_scanned": stats.FilesScanned,
 			"rules_found":  stats.RulesFound,
@@ -171,6 +176,76 @@ func (r *Reporter) outputHTML(findings []models.Finding, stats ReportStats) {
 </html>`
 
 	fmt.Println(html)
+}
+
+func (r *Reporter) outputSARIF(findings []models.Finding, stats ReportStats) {
+	rules := []map[string]interface{}{}
+	results := []map[string]interface{}{}
+	ruleMap := map[string]bool{}
+
+	for i, f := range findings {
+		ruleID := fmt.Sprintf("RULE%d", i+1)
+		if !ruleMap[ruleID] {
+			rules = append(rules, map[string]interface{}{
+				"id":               ruleID,
+				"name":              f.Message,
+				"shortDescription":  map[string]string{"text": f.Message},
+				"helpUri":          "https://github.com/Ghostalex07/PolkitGuard",
+				"defaultConfiguration": map[string]interface{}{
+					"level": getSARIFLevel(f.Severity),
+				},
+			})
+			ruleMap[ruleID] = true
+		}
+
+		results = append(results, map[string]interface{}{
+			"ruleId":   ruleID,
+			"level":    getSARIFLevel(f.Severity),
+			"message":  map[string]string{"text": f.Message},
+			"locations": []map[string]interface{}{
+				{
+					"physicalLocation": map[string]interface{}{
+						"artifactLocation": map[string]interface{}{
+							"uri": f.File,
+						},
+					},
+				},
+			},
+		})
+	}
+
+	sarif := map[string]interface{}{
+		"$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/Schemata/sarif-schema-2.1.0.json",
+		"version": "2.1.0",
+		"runs": []map[string]interface{}{
+			{
+				"tool": map[string]interface{}{
+					"driver": map[string]interface{}{
+						"name":         "PolkitGuard",
+						"version":      version,
+						"informationUri": "https://github.com/Ghostalex07/PolkitGuard",
+						"rules":       rules,
+					},
+				},
+				"results": results,
+			},
+		},
+	}
+
+	encoder := json.NewEncoder(os.Stdout)
+	encoder.SetIndent("", "  ")
+	encoder.Encode(sarif)
+}
+
+func getSARIFLevel(s models.Severity) string {
+	switch s {
+	case models.SeverityCritical, models.SeverityHigh:
+		return "error"
+	case models.SeverityMedium:
+		return "warning"
+	default:
+		return "note"
+	}
 }
 
 func getSeverityColor(s models.Severity) string {
