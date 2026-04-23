@@ -48,6 +48,30 @@ func getDetectionRules() []DetectionRule {
 			},
 		},
 		{
+			ID:             "CRIT-003",
+			Severity:       models.SeverityCritical,
+			Description:    "Service escalation pattern detected",
+			Impact:         "Potential privilege escalation via service accounts",
+			Recommendation: "Restrict access to service accounts",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Identity, "unix-user:") &&
+					(strings.Contains(rule.Action, "service") ||
+						strings.Contains(rule.Action, "systemd"))
+			},
+		},
+		{
+			ID:             "CRIT-004",
+			Severity:       models.SeverityCritical,
+			Description:    "Network-related dangerous action",
+			Impact:         "Unrestricted network access pose security risk",
+			Recommendation: "Restrict network-related actions to specific users",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "network") ||
+					strings.Contains(rule.Action, "firewall") ||
+					strings.Contains(rule.Action, "connect")
+			},
+		},
+		{
 			ID:             "HIGH-001",
 			Severity:       models.SeverityHigh,
 			Description:    "Permissions granted to unix-group:all",
@@ -79,6 +103,19 @@ func getDetectionRules() []DetectionRule {
 			},
 		},
 		{
+			ID:             "HIGH-004",
+			Severity:       models.SeverityHigh,
+			Description:    "Overly permissive session check",
+			Impact:         "Session validation can be bypassed",
+			Recommendation: "Implement proper session validation",
+			Check: func(rule models.PolkitRule) bool {
+				hasInactive := strings.Contains(rule.Raw, "inactive")
+				hasActive := strings.Contains(rule.Raw, "active")
+				return strings.Contains(rule.Raw, "result_any=auth_admin_keep") &&
+					!hasInactive && !hasActive
+			},
+		},
+		{
 			ID:             "MED-001",
 			Severity:       models.SeverityMedium,
 			Description:    "Ambiguous identity condition",
@@ -86,6 +123,28 @@ func getDetectionRules() []DetectionRule {
 			Recommendation: "Use explicit identity checks",
 			Check: func(rule models.PolkitRule) bool {
 				return rule.Identity == "" && rule.Raw != ""
+			},
+		},
+		{
+			ID:             "MED-002",
+			Severity:       models.SeverityMedium,
+			Description:    "Redundant rule configuration",
+			Impact:         "Multiple rules may conflict or duplicate",
+			Recommendation: "Consolidate or remove redundant rules",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Raw, "result_any") &&
+					strings.Contains(rule.Raw, "result_any")
+			},
+		},
+		{
+			ID:             "MED-003",
+			Severity:       models.SeverityMedium,
+			Description:    "Potentially contradictory rule",
+			Impact:         "Conflicting authorization results",
+			Recommendation: "Review rule for consistency",
+			Check: func(rule models.PolkitRule) bool {
+				return (rule.ResultActive == "yes" && rule.ResultInactive == "auth_admin") ||
+					(rule.ResultActive == "auth_admin" && rule.ResultInactive == "yes")
 			},
 		},
 		{
@@ -97,6 +156,27 @@ func getDetectionRules() []DetectionRule {
 			Check: func(rule models.PolkitRule) bool {
 				return rule.ResultActive != "" && rule.ResultInactive != "" &&
 					rule.ResultActive != rule.ResultInactive
+			},
+		},
+		{
+			ID:             "LOW-002",
+			Severity:       models.SeverityLow,
+			Description:    "Poorly named rule file",
+			Impact:         "Difficult to identify rule purpose",
+			Recommendation: "Use descriptive file names",
+			Check: func(rule models.PolkitRule) bool {
+				name := rule.File
+				return len(name) > 0 && len(name) < 10
+			},
+		},
+		{
+			ID:             "LOW-003",
+			Severity:       models.SeverityLow,
+			Description:    "Rule file without comments",
+			Impact:         "Missing documentation for maintenance",
+			Recommendation: "Add comments explaining rule purpose",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Raw != "" && !strings.Contains(rule.Raw, "#")
 			},
 		},
 	}

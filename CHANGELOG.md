@@ -2,6 +2,21 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.4.0] - Phase 2 Completion
+
+### Added
+- 6 new detection rules:
+  - CRIT-003: Service escalation patterns
+  - CRIT-004: Network-related dangerous actions
+  - HIGH-004: Overly permissive session check
+  - MED-002: Redundant rules
+  - MED-003: Contradictory rules
+  - LOW-002: Poorly named files
+  - LOW-003: Files without comments
+- Exit codes based on severity found
+- .pkla format support (legacy)
+- HasCritical(), HasHigh(), HasMedium() methods on ScanResult
+
 ## [0.3.1] - Verbose Mode & Bug Fixes
 
 ### Added

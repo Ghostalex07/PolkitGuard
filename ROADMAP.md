@@ -46,7 +46,7 @@
 
 ### Parser Improvements
 - [ ] Handle JavaScript expressions (return polkit.identity()...)
-- [ ] Support `.pkla` format (legacy)
+- [x] Support `.pkla` format (legacy)
 - [ ] Extract action ID from complex rules
 
 ### Detection Rules
@@ -59,20 +59,29 @@
 - [ ] Add LOW-003: Files without comments
 
 ### Output & Reporting
-- [ ] JSON output for machine parsing
+- [x] JSON output for machine parsing
 - [ ] HTML report generation
 - [ ] Summary statistics (total files, rules, by severity)
-- [ ] Exit codes based on severity found
+- [x] Exit codes based on severity found
 
 ### Error Handling
-- [ ] Graceful handling of unreadable files
-- [ ] Permission denied warnings
-- [ ] Verbose mode (`-v`)
+- [x] Graceful handling of unreadable files
+- [x] Permission denied warnings
+- [x] Verbose mode (`-v`)
 
 ### Tests
 - [x] Unit tests for parser
 - [x] Unit tests for detector
-- [ ] Integration tests with testdata
+- [x] Integration tests with testdata
+
+### Detection Rules
+- [x] Add CRIT-003: Service escalation patterns
+- [x] Add CRIT-004: Network-related dangerous actions
+- [x] Add HIGH-004: Overly permissive session checks
+- [x] Add MED-002: Redundant rules
+- [x] Add MED-003: Contradictory rules
+- [x] Add LOW-002: Poorly named files
+- [x] Add LOW-003: Files without comments
 
 ---
 

@@ -91,3 +91,30 @@ func (sr *ScanResult) GetFindingsByMinSeverity(min Severity) []Finding {
 	}
 	return filtered
 }
+
+func (sr *ScanResult) HasCritical() bool {
+	for _, f := range sr.Findings {
+		if f.Severity == SeverityCritical {
+			return true
+		}
+	}
+	return false
+}
+
+func (sr *ScanResult) HasHigh() bool {
+	for _, f := range sr.Findings {
+		if f.Severity >= SeverityHigh {
+			return true
+		}
+	}
+	return false
+}
+
+func (sr *ScanResult) HasMedium() bool {
+	for _, f := range sr.Findings {
+		if f.Severity >= SeverityMedium {
+			return true
+		}
+	}
+	return false
+}

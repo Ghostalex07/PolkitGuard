@@ -120,4 +120,17 @@ func main() {
 	}
 
 	r.Output(result, format)
+
+	if result.HasCritical() {
+		os.Exit(4)
+	}
+	if result.HasHigh() {
+		os.Exit(3)
+	}
+	if result.HasMedium() {
+		os.Exit(2)
+	}
+	if len(result.Findings) > 0 {
+		os.Exit(1)
+	}
 }
