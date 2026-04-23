@@ -45,9 +45,9 @@
 ## Phase 2: Expansion
 
 ### Parser Improvements
-- [ ] Handle JavaScript expressions (return polkit.identity()...)
-- [x] Support `.pkla` format (legacy)
-- [ ] Extract action ID from complex rules
+- [x] Handle JavaScript expressions
+- [x] Support `.pkla` format
+- [x] Extract action ID from complex rules
 
 ### Detection Rules
 - [x] CRIT-001: Access without authentication
@@ -79,11 +79,6 @@
 ### Tests
 - [x] Unit tests (parser, detector)
 - [x] Integration tests
-
-### Parser Improvements
-- [x] Handle JavaScript expressions
-- [x] Support `.pkla` format
-- [x] Extract action ID from complex rules
 
 ---
 
