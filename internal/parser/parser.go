@@ -91,6 +91,44 @@ func extractRuleName(raw string) string {
 	return "unknown"
 }
 
+func extractActionFromJS(raw string) string {
+	patterns := []string{
+		`action\s*=\s*"([^"]+)"`,
+		`"org\.[^"]+"`,
+		`polkit\.action\s*\(\s*"([^"]+)`,
+	}
+
+	for _, pattern := range patterns {
+		if idx := strings.Index(raw, "action"); idx != -1 {
+			rest := raw[idx:]
+			if strings.Contains(rest, "org.") {
+				start := strings.Index(rest, "org.")
+				end := start + strings.Index(rest[start:], "\"")
+				if end > start {
+					action := rest[start:end]
+					if idx := strings.Index(action, "\""); idx > 0 {
+						return action[:idx]
+					}
+					return action
+				}
+			}
+		}
+	}
+	return ""
+}
+
+func extractIdentityFromJS(raw string) string {
+	if strings.Contains(raw, "euid") || strings.Contains(raw, "uid") {
+		if strings.Contains(raw, "== 0") || strings.Contains(raw, "==0") {
+			return "unix-user:root"
+		}
+	}
+	if strings.Contains(raw, "gid") {
+		return "unix-group:root"
+	}
+	return ""
+}
+
 func (p *Parser) ParseDirectory(dirpath string) ([]models.PolkitRule, error) {
 	var allRules []models.PolkitRule
 

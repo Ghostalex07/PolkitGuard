@@ -67,8 +67,8 @@
 
 ### Output & Reporting
 - [x] JSON output
-- [ ] HTML report
-- [ ] Summary statistics
+- [x] HTML report
+- [x] Summary statistics
 - [x] Exit codes
 
 ### Error Handling
@@ -79,6 +79,11 @@
 ### Tests
 - [x] Unit tests (parser, detector)
 - [x] Integration tests
+
+### Parser Improvements
+- [x] Handle JavaScript expressions
+- [x] Support `.pkla` format
+- [x] Extract action ID from complex rules
 
 ---
 

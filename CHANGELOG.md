@@ -2,6 +2,13 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.5.0] - Phase 2 Complete
+
+### Added
+- Summary statistics (files scanned, rules, by severity)
+- HTML report generation (--html flag)
+- Improved parser for JavaScript expressions
+
 ## [0.4.0] - Phase 2 Completion
 
 ### Added

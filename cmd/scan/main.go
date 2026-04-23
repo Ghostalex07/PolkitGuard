@@ -16,10 +16,10 @@ const version = "0.3.0"
 
 var (
 	flagPath     string
-	flagJSON     bool
 	flagSeverity string
-	flagHelp     bool
-	flagVerbose  bool
+	flagHelp    bool
+	flagVerbose bool
+	format     string
 )
 
 func init() {
@@ -28,6 +28,7 @@ func init() {
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
+	flag.StringVar(&format, "format", "text", "Output format: text, json, html")
 	flag.Usage = usage
 }
 
@@ -113,11 +114,6 @@ func main() {
 
 	severity := getSeverityLevel(flagSeverity)
 	r := report.NewReporter(severity)
-
-	format := "text"
-	if flagJSON {
-		format = "json"
-	}
 
 	r.Output(result, format)
 
