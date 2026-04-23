@@ -1,0 +1,4 @@
+[polkit_rule]
+identity=unix-user:*
+action=org.freedesktop.*
+result_any=auth_admin_keep

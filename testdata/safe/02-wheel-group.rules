@@ -1,0 +1,4 @@
+[polkit_rule]
+identity=unix-group:wheel
+action=org.freedesktop.login-manager*
+result_any=auth_admin_keep

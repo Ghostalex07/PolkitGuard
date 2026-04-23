@@ -1,0 +1,4 @@
+[polkit_rule]
+identity=unix-group:all
+action=org.freedesktop.device-manager*
+result_any=auth_admin_keep
