@@ -50,38 +50,35 @@
 - [ ] Extract action ID from complex rules
 
 ### Detection Rules
-- [ ] Add CRIT-003: Service escalation patterns
-- [ ] Add CRIT-004: Network-related dangerous actions
-- [ ] Add HIGH-004: Overly permissive session checks
-- [ ] Add MED-002: Redundant rules
-- [ ] Add MED-003: Contradictory rules
-- [ ] Add LOW-002: Poorly named files
-- [ ] Add LOW-003: Files without comments
+- [x] CRIT-001: Access without authentication
+- [x] CRIT-002: unix-user:*
+- [x] CRIT-003: Service escalation
+- [x] CRIT-004: Network dangerous
+- [x] HIGH-001: unix-group:all
+- [x] HIGH-002: Wildcard actions
+- [x] HIGH-003: org.freedesktop.*
+- [x] HIGH-004: Permissive session
+- [x] MED-001: Ambiguous identity
+- [x] MED-002: Redundant rules
+- [x] MED-003: Contradictory rules
+- [x] LOW-001: Inconsistent results
+- [x] LOW-002: Poorly named
+- [x] LOW-003: No comments
 
 ### Output & Reporting
-- [x] JSON output for machine parsing
-- [ ] HTML report generation
-- [ ] Summary statistics (total files, rules, by severity)
-- [x] Exit codes based on severity found
+- [x] JSON output
+- [ ] HTML report
+- [ ] Summary statistics
+- [x] Exit codes
 
 ### Error Handling
-- [x] Graceful handling of unreadable files
-- [x] Permission denied warnings
-- [x] Verbose mode (`-v`)
+- [x] Graceful handling
+- [x] Permission warnings
+- [x] Verbose mode
 
 ### Tests
-- [x] Unit tests for parser
-- [x] Unit tests for detector
-- [x] Integration tests with testdata
-
-### Detection Rules
-- [x] Add CRIT-003: Service escalation patterns
-- [x] Add CRIT-004: Network-related dangerous actions
-- [x] Add HIGH-004: Overly permissive session checks
-- [x] Add MED-002: Redundant rules
-- [x] Add MED-003: Contradictory rules
-- [x] Add LOW-002: Poorly named files
-- [x] Add LOW-003: Files without comments
+- [x] Unit tests (parser, detector)
+- [x] Integration tests
 
 ---
 
