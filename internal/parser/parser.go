@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 
@@ -36,7 +35,7 @@ func (p *Parser) ParseFile(filepath string) ([]models.PolkitRule, error) {
 
 		if strings.HasPrefix(line, "[") && strings.HasSuffix(line, "]") {
 			if inBlock && currentRule.Raw != "" {
-				currentRule.Rule = extractRuleName(currentRule.Raw)
+				currentRule.RuleName = extractRuleName(currentRule.Raw)
 				rules = append(rules, currentRule)
 			}
 			currentRule = models.PolkitRule{File: filepath, LineNumber: lineNum}
@@ -64,7 +63,7 @@ func (p *Parser) ParseFile(filepath string) ([]models.PolkitRule, error) {
 	}
 
 	if inBlock && currentRule.Raw != "" {
-		currentRule.Rule = extractRuleName(currentRule.Raw)
+		currentRule.RuleName = extractRuleName(currentRule.Raw)
 		rules = append(rules, currentRule)
 	}
 

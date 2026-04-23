@@ -56,14 +56,15 @@ func (f Finding) String() string {
 }
 
 type PolkitRule struct {
-	Identity      string
-	Action        string
-	ResultAny     string
-	ResultActive  string
+	Identity       string
+	Action         string
+	ResultAny      string
+	ResultActive   string
 	ResultInactive string
-	Raw           string
-	File          string
-	LineNumber    int
+	Raw            string
+	File           string
+	RuleName       string
+	LineNumber     int
 }
 
 type ScanResult struct {
