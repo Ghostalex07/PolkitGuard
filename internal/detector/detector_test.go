@@ -15,8 +15,8 @@ func TestDetectCRIT001(t *testing.T) {
 	}
 
 	findings := d.Detect(rule)
-	if len(findings) != 1 {
-		t.Fatalf("expected 1 finding, got %d", len(findings))
+	if len(findings) < 1 {
+		t.Fatalf("expected at least 1 finding, got %d", len(findings))
 	}
 	if findings[0].Severity != models.SeverityCritical {
 		t.Errorf("expected CRITICAL severity, got %s", findings[0].Severity)

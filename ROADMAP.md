@@ -70,8 +70,8 @@
 - [ ] Verbose mode (`-v`)
 
 ### Tests
-- [ ] Unit tests for parser
-- [ ] Unit tests for detector
+- [x] Unit tests for parser
+- [x] Unit tests for detector
 - [ ] Integration tests with testdata
 
 ---

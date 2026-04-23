@@ -9,6 +9,7 @@ All notable changes to PolkitGuard will be documented in this file.
 - Added unit tests for `detector` package (CRIT-001/002, HIGH-001/002/003, MED-001, LOW-001)
 
 ### Fixed
+- TestDetectCRIT001: Fixed test to handle multiple findings (ambiguous identity also triggers)
 - Updated module path from Polkit-Security-Scanner to PolkitGuard to match actual GitHub repo
 
 ## [0.2.0] - Bug Fixes
