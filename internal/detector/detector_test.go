@@ -75,10 +75,11 @@ func TestDetectHIGH002Wildcard(t *testing.T) {
 		action   string
 		expected int
 	}{
-		{"org.freedesktop.system*", 1},
+		{"org.freedesktop.system*", 0}, // now handled by HIGH-003, not HIGH-002
 		{"org.test", 0},
 		{"abc", 0},
 		{"*", 0},
+		{"org.custom*", 1}, // only wildcard, no org.freedesktop
 	}
 
 	for _, tt := range tests {
@@ -121,6 +122,7 @@ func TestDetectMED001Ambiguous(t *testing.T) {
 	}
 
 	findings := d.Detect(rule)
+	// Now only 1 - MED-001 (LOW-003 requires Identity != "")
 	if len(findings) != 1 {
 		t.Fatalf("expected 1 finding for ambiguous identity, got %d", len(findings))
 	}
