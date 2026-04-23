@@ -2,6 +2,12 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.2.0] - Bug Fixes
+
+### Fixed
+- CRIT-001: Now only triggers on `result_any=yes`, not `auth_admin_keep` (which requires auth)
+- HIGH-002: Fixed condition to avoid false positives on short patterns
+
 ## [0.1.0] - Initial Implementation
 
 ### Added

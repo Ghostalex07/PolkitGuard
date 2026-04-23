@@ -30,11 +30,11 @@ func getDetectionRules() []DetectionRule {
 		{
 			ID:             "CRIT-001",
 			Severity:       models.SeverityCritical,
-			Description:    "Access granted without authentication to all users",
+			Description:    "Access granted without authentication",
 			Impact:         "Any user on the system can perform privileged actions",
 			Recommendation: "Require authentication for this action",
 			Check: func(rule models.PolkitRule) bool {
-				return rule.ResultAny == "yes" || rule.ResultAny == "auth_admin_keep"
+				return rule.ResultAny == "yes"
 			},
 		},
 		{
@@ -65,7 +65,7 @@ func getDetectionRules() []DetectionRule {
 			Impact:         "Action matches more systems than intended",
 			Recommendation: "Use specific action patterns instead of wildcards",
 			Check: func(rule models.PolkitRule) bool {
-				return strings.Contains(rule.Action, "*") && len(rule.Action) < 20
+				return len(rule.Action) > 3 && strings.Contains(rule.Action, "*")
 			},
 		},
 		{
