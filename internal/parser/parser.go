@@ -77,6 +77,9 @@ func extractValue(line, prefix string) string {
 }
 
 func extractRuleName(raw string) string {
+	if raw == "" {
+		return "unknown"
+	}
 	lines := strings.Split(raw, "\n")
 	for _, line := range lines {
 		line = strings.TrimSpace(line)
@@ -85,7 +88,10 @@ func extractRuleName(raw string) string {
 		}
 	}
 	if len(lines) > 0 {
-		return strings.TrimSpace(lines[0])
+		first := strings.TrimSpace(lines[0])
+		if first != "" {
+			return first
+		}
 	}
 	return "unknown"
 }

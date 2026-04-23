@@ -89,7 +89,9 @@ func getDetectionRules() []DetectionRule {
 			Impact:         "Action matches more systems than intended",
 			Recommendation: "Use specific action patterns instead of wildcards",
 			Check: func(rule models.PolkitRule) bool {
-				return len(rule.Action) > 3 && strings.Contains(rule.Action, "*")
+				return len(rule.Action) > 3 &&
+					strings.Contains(rule.Action, "*") &&
+					!strings.Contains(rule.Action, "org.freedesktop.")
 			},
 		},
 		{
@@ -176,7 +178,9 @@ func getDetectionRules() []DetectionRule {
 			Impact:         "Missing documentation for maintenance",
 			Recommendation: "Add comments explaining rule purpose",
 			Check: func(rule models.PolkitRule) bool {
-				return rule.Raw != "" && !strings.Contains(rule.Raw, "#")
+				return rule.Raw != "" &&
+					!strings.Contains(rule.Raw, "#") &&
+					rule.Identity != ""
 			},
 		},
 	}
