@@ -1,3 +1,3 @@
-module github.com/Ghostalex07/Polkit-Security-Scanner
+module github.com/Ghostalex07/PolkitGuard
 
 go 1.21

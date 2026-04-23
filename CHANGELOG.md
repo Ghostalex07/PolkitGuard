@@ -2,6 +2,11 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.3.0] - Repository Fixes
+
+### Fixed
+- Updated module path from Polkit-Security-Scanner to PolkitGuard to match actual GitHub repo
+
 ## [0.2.0] - Bug Fixes
 
 ### Fixed

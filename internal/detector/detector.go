@@ -1,7 +1,7 @@
 package detector
 
 import (
-	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/models"
+	"github.com/Ghostalex07/PolkitGuard/internal/models"
 	"strings"
 )
 
