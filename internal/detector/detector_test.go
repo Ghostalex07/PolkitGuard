@@ -98,7 +98,7 @@ func TestDetectHIGH003OrgFreedesktop(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity: "unix-user:admin",
-		Action:  "org.freedesktop.login",
+		Action:  "org.freedesktop.system*", // wildcard triggers HIGH-003
 	}
 
 	findings := d.Detect(rule)
