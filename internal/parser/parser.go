@@ -91,25 +91,17 @@ func extractRuleName(raw string) string {
 }
 
 func extractActionFromJS(raw string) string {
-	patterns := []string{
-		`action\s*=\s*"([^"]+)"`,
-		`"org\.[^"]+"`,
-		`polkit\.action\s*\(\s*"([^"]+)`,
-	}
-
-	for _, pattern := range patterns {
-		if idx := strings.Index(raw, "action"); idx != -1 {
-			rest := raw[idx:]
-			if strings.Contains(rest, "org.") {
-				start := strings.Index(rest, "org.")
-				end := start + strings.Index(rest[start:], "\"")
-				if end > start {
-					action := rest[start:end]
-					if idx := strings.Index(action, "\""); idx > 0 {
-						return action[:idx]
-					}
-					return action
+	if idx := strings.Index(raw, "action"); idx != -1 {
+		rest := raw[idx:]
+		if strings.Contains(rest, "org.") {
+			start := strings.Index(rest, "org.")
+			end := start + strings.Index(rest[start:], "\"")
+			if end > start {
+				action := rest[start:end]
+				if idx := strings.Index(action, "\""); idx > 0 {
+					return action[:idx]
 				}
+				return action
 			}
 		}
 	}
