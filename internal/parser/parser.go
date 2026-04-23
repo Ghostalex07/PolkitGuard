@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/polkitguard/polkitguard/internal/models"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/models"
 )
 
 type Parser struct{}

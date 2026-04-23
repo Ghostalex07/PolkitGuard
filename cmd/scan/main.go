@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/polkitguard/polkitguard/internal/detector"
-	"github.com/polkitguard/polkitguard/internal/models"
-	"github.com/polkitguard/polkitguard/internal/parser"
-	"github.com/polkitguard/polkitguard/internal/report"
-	"github.com/polkitguard/polkitguard/internal/scanner"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/detector"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/models"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/parser"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/report"
+	"github.com/Ghostalex07/Polkit-Security-Scanner/internal/scanner"
 )
 
 var (

@@ -106,13 +106,13 @@ Recommendation: Restrict to specific groups
 ## Installation
 
 ```bash
-go install github.com/polkitguard/polkitguard@latest
+go install github.com/Ghostalex07/Polkit-Security-Scanner@latest
 ```
 
 Or clone and build:
 
 ```bash
-git clone https://github.com/polkitguard/polkitguard.git
+git clone https://github.com/Ghostalex07/Polkit-Security-Scanner.git
 cd polkitguard
 go build -o polkitguard ./cmd/scan
 ```
