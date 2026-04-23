@@ -88,23 +88,23 @@
 - [x] GitHub Actions workflow
 - [x] Auto-build on push
 - [x] Test runner in CI
-- [ ] Release automation
+- [x] Release automation
 
 ### Distribution
-- [ ] Binary releases (Linux amd64, arm64)
-- [ ] Package for AUR (Arch Linux)
-- [ ] Package for DEB/RPM (Debian/RedHat)
+- [x] Binary releases (Linux amd64, arm64)
+- [x] Package for AUR (Arch Linux)
+- [x] Package for DEB/RPM (Debian/RedHat)
 
 ### Documentation
 - [x] CONTRIBUTING.md
 - [x] CODE_OF_CONDUCT.md
 - [x] SECURITY.md (security contact)
-- [ ] User guide / manual pages
-- [ ] Examples of real vulnerable configurations
+- [x] User guide / manual pages
+- [x] Examples of real vulnerable configurations
 
 ### UX Improvements
 - [x] Interactive mode (auto-confirm with -y)
-- [ ] Config file support (JSON/YAML)
+- [x] Config file support (JSON/YAML)
 - [x] Multiple output formats (JSON, SARIF, HTML)
 - [x] Quiet mode (`-q`)
 
