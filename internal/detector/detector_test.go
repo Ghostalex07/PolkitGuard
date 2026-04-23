@@ -75,11 +75,11 @@ func TestDetectHIGH002Wildcard(t *testing.T) {
 		action   string
 		expected int
 	}{
-		{"org.freedesktop.system*", 0}, // now handled by HIGH-003, not HIGH-002
+		{"org.freedesktop.system*", 1}, // HIGH-003: wildcard + org.freedesktop
 		{"org.test", 0},
 		{"abc", 0},
 		{"*", 0},
-		{"org.custom*", 1}, // only wildcard, no org.freedesktop
+		{"org.custom*", 1}, // HIGH-002: wildcard, no org.freedesktop
 	}
 
 	for _, tt := range tests {

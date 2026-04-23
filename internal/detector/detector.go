@@ -101,7 +101,9 @@ func getDetectionRules() []DetectionRule {
 			Impact:         "Broad access to system operations",
 			Recommendation: "Specify exact actions needed",
 			Check: func(rule models.PolkitRule) bool {
-				return strings.Contains(rule.Action, "org.freedesktop.")
+				action := rule.Action
+				return (strings.Contains(action, "*") || action == "org.freedesktop.") &&
+					strings.Contains(action, "org.freedesktop.")
 			},
 		},
 		{
