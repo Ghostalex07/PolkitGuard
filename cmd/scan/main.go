@@ -24,7 +24,6 @@ var (
 
 func init() {
 	flag.StringVar(&flagPath, "path", "", "Custom path to scan (default: system polkit directories)")
-	flag.BoolVar(&flagJSON, "json", false, "Output in JSON format")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
