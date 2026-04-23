@@ -1,221 +1,206 @@
-# 🛡️ PolkitGuard
+# PolkitGuard
 
-### Practical security auditing for Linux privilege policies
+**Practical security auditing for Linux privilege policies**
 
 > Detect dangerous Polkit misconfigurations and turn them into clear, actionable security insights.
 
 ---
 
-## 🚀 Overview
+## Overview
 
-**PolkitGuard** is an open-source security auditing tool that analyzes Polkit rules on Linux systems and identifies configurations that may lead to:
+**PolkitGuard** is an open-source security auditing tool that analyzes Polkit rules on Linux systems and identifies configurations that may lead to privilege escalation, unauthorized access, or misuse of system-level actions.
 
-* Privilege escalation
-* Unauthorized access
-* Misuse of system-level actions
-
-Polkit is a core component in modern Linux systems, but its configuration is often complex and overlooked.
-PolkitGuard simplifies this by translating policies into **real-world security risks you can understand and fix**.
+The goal is not to build an academic tool, but a practical, clear utility that allows administrators, security students, and security teams to quickly understand if a machine has dangerous rules.
 
 ---
 
-## 🎯 Project Goals
+## How It Works
 
-* Identify insecure Polkit configurations
-* Highlight real risks (not theoretical noise)
-* Provide clear, human-readable explanations
-* Help users improve system security
+```
+Scanner (find .rules files) → Parser (extract rules) → Detector (find risky patterns) → Reporter (output findings)
+```
 
----
-
-## ⚖️ Scope (What This Project Is)
-
-PolkitGuard is designed to be:
-
-* ✅ Focused → Only Polkit (not full system auditing)
-* ✅ Practical → Detects real misconfigurations
-* ✅ Lightweight → Fast and easy to use
-* ✅ Extensible → Can grow over time
+1. **Scan**: Finds Polkit rule files in standard locations (`/usr/share/polkit-1/rules.d/`, `/etc/polkit/`)
+2. **Parse**: Extracts rule components (`identity`, `action`, `result_*`)
+3. **Detect**: Applies detection patterns to identify security issues
+4. **Report**: Generates human-readable output with severity classification
 
 ---
 
-## ⚠️ Limitations (Important)
+## Architecture
 
-To stay realistic and maintainable:
+```
+polkitguard/
+├── cmd/scan/main.go        # CLI entry point
+├── internal/
+│   ├── scanner/            # File system scanning
+│   ├── parser/             # .rules file parsing
+│   ├── detector/           # Pattern detection engine
+│   └── report/             # Report generation
+├── rules/                  # Detection rule definitions
+├── testdata/               # Safe & vulnerable examples for testing
+└── go.mod
+```
 
-* ❌ Does NOT fully interpret all JavaScript logic
-* ❌ Does NOT emulate the full Polkit engine
-* ❌ Does NOT guarantee detection of all vulnerabilities
+### Core Components
 
-👉 Instead, it focuses on:
+#### Scanner
+Locates Polkit rule files in standard Linux paths.
 
-> High-confidence, real-world security issues
+#### Parser
+Parses `.rules` files and extracts:
+- `identity` (unix-user, unix-group, etc.)
+- `action` (the action being authorized)
+- `result_any`, `result_active`, `result_inactive` (authorization result)
 
----
+#### Detector
+Pattern-based detection engine (extensible via interfaces):
 
-## 🔍 What PolkitGuard Detects
+| Severity | Pattern Example |
+|----------|-----------------|
+| CRITICAL | `result_any=yes` without authentication |
+| CRITICAL | Access granted to `unix-user:*` (any user) |
+| HIGH | Permissions to `unix-group:all` or broad groups |
+| HIGH | Wildcard actions like `org.freedesktop.*` |
+| MEDIUM | Ambiguous conditions |
+| LOW | Redundant or poorly structured rules |
 
-### 🔴 Critical
-
-* Unrestricted access to privileged actions
-* Rules that always allow access
-* Missing authentication requirements
-* Permissions granted to all users
-
----
-
-### 🟠 High
-
-* Permissions granted to broad groups
-* Overly generic or wildcard-based rules
-* Access to sensitive system actions without proper checks
-
----
-
-### 🟡 Medium
-
-* Weak or ambiguous rule conditions
-* Incomplete validation logic
-
----
-
-### 🔵 Low
-
-* Redundant or poorly structured rules
-* Bad configuration practices
+#### Reporter
+Outputs findings in multiple formats:
+- Text (default): human-readable output
+- JSON (`--json`): structured output for automation
 
 ---
 
-## 🧪 Example Output
+## Quick Start
 
 ```bash
+# Build
+go build -o polkitguard ./cmd/scan
+
+# Run
+./polkitguard scan
+./polkitguard scan --json
+./polkitguard scan --path /custom/rules/directory
+./polkitguard scan --severity high
+```
+
+---
+
+## Output Example
+
+```
 [CRITICAL] 10-storage.rules
 → Access granted without authentication
 Impact: Any user may perform privileged actions
+Recommendation: Require authentication for this action
 
 [HIGH] 20-network.rules
 → Broad group permissions detected
 Impact: Increased attack surface
+Recommendation: Restrict to specific groups
 ```
 
 ---
 
-## 🔄 How It Works
+## Installation
 
-1. Scans Polkit rule files on the system
-2. Identifies known risky patterns
-3. Classifies findings by severity
-4. Generates a clear, readable report
-
----
-
-## 👥 Target Users
-
-* Linux system administrators
-* Security engineers / Blue Teams
-* Pentesters
-* Advanced Linux users
-* Cybersecurity students
-
----
-
-## 🧱 Project Structure
-
+```bash
+go install github.com/polkitguard/polkitguard@latest
 ```
-polkitguard/
-├── docs/              # Documentation
-├── testdata/          # Safe & vulnerable examples
-├── rules/             # Detection patterns
-├── internal/          # Core logic
-├── cmd/               # CLI entrypoint
-└── README.md
+
+Or clone and build:
+
+```bash
+git clone https://github.com/polkitguard/polkitguard.git
+cd polkitguard
+go build -o polkitguard ./cmd/scan
 ```
 
 ---
 
-## 🧪 Testing Philosophy
+## What This Project Is
+
+**Scope:**
+- Focused scanner for Polkit (not full system auditing)
+- Detects real misconfigurations with high confidence
+- Lightweight, fast, and easy to use
+- Extensible architecture for future growth
+
+**Limitations:**
+- Does NOT fully interpret all JavaScript logic
+- Does NOT emulate the full Polkit engine
+- Does NOT guarantee detection of all vulnerabilities
+
+The focus is on **high-confidence, real-world security issues**.
+
+---
+
+## Target Users
+
+- Linux system administrators
+- Security engineers / Blue Teams
+- Pentesters looking for privilege escalation vectors
+- Advanced Linux users
+- Cybersecurity students
+
+---
+
+## Testing Philosophy
 
 PolkitGuard focuses on reliability:
 
-* Real-world vulnerable configurations
-* Safe baseline configurations
-* Edge cases
-* Continuous improvement to reduce false positives
+- Real-world vulnerable configurations in `testdata/`
+- Safe baseline configurations
+- Edge cases
+- Continuous improvement to reduce false positives
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
-### Phase 1
+### Phase 1: MVP
+- Basic file scanning
+- Critical issue detection
+- Simple text output
 
-* Basic scanning
-* Critical issue detection
+### Phase 2: Expansion
+- Extended detection patterns
+- Improved severity classification
 
-### Phase 2
+### Phase 3: Maturity
+- JSON export
+- Better reporting
+- CI/CD integration
 
-* Expanded detection rules
-* Improved classification
-
-### Phase 3
-
-* Better reporting
-* Export formats
-
-### Phase 4
-
-* Integration with other tools
-* Extended Linux security auditing
+### Phase 4: Growth
+- Integration with security tools
+- Extended Linux security auditing
 
 ---
 
-## 👥 Team Roles (Recommended)
+## Project Principles
 
-* **Core Logic** → File analysis and rule extraction
-* **Security Analysis** → Detection patterns and risk definition
-* **UX & Documentation** → Output clarity and project presentation
-
----
-
-## ⚖️ Project Principles
-
-* Clarity over complexity
-* Practical detection over theoretical accuracy
-* Minimal false positives
-* Always explain the risk
-* Build something useful, not perfect
+- Clarity over complexity
+- Practical detection over theoretical accuracy
+- Minimal false positives
+- Always explain the risk
+- Build something useful, not perfect
 
 ---
 
-## 🚀 Future Improvements
-
-* More detection rules
-* Better scoring system
-* JSON output
-* Integration with security tools
-* Expansion beyond Polkit
-
----
-
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome:
 
-* Add new detection rules
-* Improve documentation
-* Suggest improvements
+- Add new detection rules
+- Improve documentation
+- Suggest improvements via issues
+
+See `PROJECT_SPEC.md` for full project specifications.
 
 ---
 
-## 📜 License
+## License
 
 MIT License
-
----
-
-## 🧠 Final Note
-
-PolkitGuard is not just a scanner.
-
-It is a tool designed to **bridge the gap between complex Linux permission systems and real-world security risks**, making systems easier to audit and safer to manage.
-
----
