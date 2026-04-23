@@ -40,7 +40,8 @@ func usage() {
 	fmt.Println("  polkitguard                    # Scan default locations")
 	fmt.Println("  polkitguard --path /custom/rules")
 	fmt.Println("  polkitguard --severity high    # Only show HIGH and CRITICAL")
-	fmt.Println("  polkitguard --json             # JSON output")
+	fmt.Println("  polkitguard --format json    # JSON output")
+	fmt.Println("  polkitguard --format html    # HTML report")
 }
 
 func getSeverityLevel(level string) models.Severity {
