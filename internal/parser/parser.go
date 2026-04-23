@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
@@ -102,7 +104,7 @@ func (p *Parser) ParseDirectory(dirpath string) ([]models.PolkitRule, error) {
 			continue
 		}
 		if strings.HasSuffix(entry.Name(), ".rules") {
-			rules, err := p.ParseFile(dirpath + "/" + entry.Name())
+			rules, err := p.ParseFile(filepath.Join(dirpath, entry.Name()))
 			if err != nil {
 				continue
 			}

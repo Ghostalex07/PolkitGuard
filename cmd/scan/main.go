@@ -12,11 +12,14 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/scanner"
 )
 
+const version = "0.3.0"
+
 var (
 	flagPath     string
 	flagJSON     bool
 	flagSeverity string
 	flagHelp     bool
+	flagVerbose  bool
 )
 
 func init() {
@@ -24,6 +27,7 @@ func init() {
 	flag.BoolVar(&flagJSON, "json", false, "Output in JSON format")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
+	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
 	flag.Usage = usage
 }
 
@@ -60,7 +64,13 @@ func main() {
 		os.Exit(0)
 	}
 
-	fmt.Println("PolkitGuard v0.1.0 - Scanning for Polkit security issues...\n")
+	if flagVerbose {
+		scanner.SetLogger(func(format string, args ...interface{}) {
+			fmt.Fprintf(os.Stderr, "[VERBOSE] "+format+"\n", args...)
+		})
+	}
+
+	fmt.Printf("PolkitGuard v%s - Scanning for Polkit security issues...\n\n", version)
 
 	var files []string
 	var err error

@@ -6,6 +6,16 @@ import (
 	"path/filepath"
 )
 
+var verboseLog func(format string, args ...interface{})
+
+func init() {
+	verboseLog = func(format string, args ...interface{}) {}
+}
+
+func SetLogger(logger func(format string, args ...interface{})) {
+	verboseLog = logger
+}
+
 type Scanner struct {
 	Paths []string
 }
@@ -31,12 +41,17 @@ func (s *Scanner) Scan() ([]string, error) {
 
 	for _, path := range s.Paths {
 		if _, err := os.Stat(path); os.IsNotExist(err) {
+			verboseLog("Directory not found: %s", path)
 			continue
 		}
 
 		files, err := filepath.Glob(filepath.Join(path, "*.rules"))
 		if err != nil {
+			verboseLog("Error scanning directory %s: %v", path, err)
 			continue
+		}
+		if len(files) == 0 {
+			verboseLog("No .rules files found in: %s", path)
 		}
 		ruleFiles = append(ruleFiles, files...)
 	}
