@@ -1,13 +1,10 @@
 {
-  "version": "0.8.0",
+  "version": "1.5.0",
   "severity_filter": "low",
   "output_format": "text",
-  "verbose": false,
-  "quiet": false,
-  "custom_paths": [
-    "/etc/polkit-1/rules.d",
-    "/usr/share/polkit-1/rules.d"
-  ],
+  "custom_paths": [],
   "exclude_rules": [],
-  "enable_rules": []
+  "ignore_paths": ["test-", "backup-", ".bak"],
+  "verbose": false,
+  "quiet": false
 }

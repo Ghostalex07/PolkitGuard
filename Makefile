@@ -1,4 +1,4 @@
-.PHONY: all build test build-local install clean lint vet check run run-test deps docker-build docker-run release
+.PHONY: all build test build-local install clean lint vet check run run-test deps docker-build docker-run release man
 
 BINARY_NAME=polkitguard
 VERSION=$(shell cat internal/config/config.go | grep 'Version.*=' | head -1 | awk -F'"' '{print $$2}')
@@ -27,6 +27,9 @@ run-test:
 
 run-json:
 	go run $(LDFLAGS) ./cmd/scan --path testdata --format json --severity high
+
+run-quiet:
+	go run $(LDFLAGS) ./cmd/scan --path testdata --severity high -q
 
 # Test
 test:
@@ -79,6 +82,16 @@ completion-bash:
 completion-zsh:
 	go run ./cmd/scan completion zsh > completions/polkitguard.zsh
 	@echo "Zsh completions saved to completions/polkitguard.zsh"
+
+# Man page
+man:
+	go run ./cmd/scan completion man > docs/polkitguard.1
+	@echo "Man page generated"
+
+# Config
+config-gen:
+	@echo "Generating config.example.json..."
+	@echo '{"version":"1.5.0","severity_filter":"low","output_format":"text","ignore_paths":["test-","backup-"]}' > config.example.json
 
 deps:
 	go mod download

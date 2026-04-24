@@ -1,0 +1,87 @@
+.TH POLKITGUARD 1 "April 2026" "PolkitGuard 1.5.0"
+.SH NAME
+polkitguard \- Security scanner for Linux Polkit configurations
+.SH SYNOPSIS
+.B polkitguard
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+PolkitGuard scans Linux Polkit configuration files for security issues and vulnerabilities.
+.SH OPTIONS
+.TP
+\fB\-\-path\fR \fI/path\fR
+Custom path to scan (default: system polkit directories)
+.TP
+\fB\-\-severity\fR \fIlevel\fR
+Minimum severity level to report (low, medium, high, critical)
+.TP
+\fB\-\-format\fR \fIfmt\fR
+Output format: text, json, html, sarif, csv
+.TP
+\fB\-\-config\fR \fIfile\fR
+Path to config file (JSON), use '-' for stdin
+.TP
+\fB\-\-output\fR \fIfile\fR
+Output file path
+.TP
+\fB\-\-summary\fR
+Show summary only (counts)
+.TP
+\fB\-\-version\fR
+Show version
+.TP
+\fB\-\-no-color\fR
+Disable colored output
+.TP
+\fB\-v\fR
+Enable verbose output
+.TP
+\fB\-q\fR
+Quiet mode (suppress banner)
+.TP
+\fB\-\-help\fR
+Show help message
+.SH CONFIG FILE
+Config file locations (in order):
+.IP \(bu 2
+./polkitguard.json
+.IP \(bu 2
+config.json
+.IP \(bu 2
+~/.config/polkitguard.json
+.IP \(bu 2
+/etc/polkitguard.json
+.SH EXIT CODES
+.TP
+0
+No security issues found
+.TP
+1
+Low severity issues found
+.TP
+2
+Medium severity issues found
+.TP
+3
+High severity issues found
+.TP
+4
+Critical issues found
+.SH EXAMPLES
+.TP
+Scan default locations:
+.B polkitguard
+.TP
+High severity only:
+.B polkitguard \-\-severity high
+.TP
+JSON output:
+.B polkitguard \-\-format json
+.TP
+Scan custom path:
+.B polkitguard \-\-path /etc/polkit\-1/localauthority
+.SH SEE ALSO
+polkitd(8), pkaction(1), pkexec(1)
+.SH AUTHOR
+Ghostalex07
+.SH LICENSE
+MIT

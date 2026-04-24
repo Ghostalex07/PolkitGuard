@@ -29,20 +29,22 @@ var (
 	flagVersion  bool
 	flagRule     string
 	flagShell    string
+	flagNoColor  bool
 	format      string
 )
 
 func init() {
 	flag.StringVar(&flagPath, "path", "", "Custom path to scan (default: system polkit directories)")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
-	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON)")
+	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON), use '-' for stdin")
 	flag.StringVar(&flagOutput, "output", "", "Output file path")
 	flag.StringVar(&flagRule, "rule", "", "Filter by rule ID (e.g., CRIT-001)")
 	flag.BoolVar(&flagSummary, "summary", false, "Show summary only (counts)")
 	flag.BoolVar(&flagVersion, "version", false, "Show version")
+	flag.BoolVar(&flagNoColor, "no-color", false, "Disable colored output")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
-	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
+	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner, show only findings")
 	flag.BoolVar(&flagConfirm, "y", false, "Skip confirmation prompts (auto-confirm)")
 	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif, csv")
 	flag.StringVar(&flagShell, "shell", "", "Generate shell completions (bash, zsh, fish)")
@@ -50,7 +52,7 @@ func init() {
 }
 
 func usage() {
-	fmt.Println("PolkitGuard - Security Scanner for Polkit")
+	fmt.Println("PolkitGuard v" + version + " - Security Scanner for Polkit")
 	fmt.Println("\nUsage: polkitguard [options]")
 	fmt.Println("\nOptions:")
 	flag.PrintDefaults()
@@ -60,9 +62,14 @@ func usage() {
 	fmt.Println("  polkitguard --severity high    # Only show HIGH and CRITICAL")
 	fmt.Println("  polkitguard --format json     # JSON output")
 	fmt.Println("  polkitguard --format html    # HTML report")
-	fmt.Println("  polkitguard --format sarif    # SARIF output")
-	fmt.Println("  polkitguard -y               # Auto-confirm (non-interactive)")
 	fmt.Println("  polkitguard -q               # Quiet mode")
+	fmt.Println("  polkitguard -v               # Verbose output")
+	fmt.Println("  polkitguard --no-color      # No colors")
+	fmt.Println("  polkitguard --config -        # Read config from stdin")
+	fmt.Println("  polkitguard --shell bash   # Generate bash completions")
+	fmt.Println("\nConfig file auto-discovery:")
+	fmt.Println("  ./polkitguard.json, config.json,")
+	fmt.Println("  ~/.config/polkitguard.json, /etc/polkitguard.json")
 }
 
 func getSeverityLevel(level string) models.Severity {
@@ -79,10 +86,35 @@ func getSeverityLevel(level string) models.Severity {
 }
 
 func loadConfig() (*config.Config, error) {
-	if flagConfig == "" {
-		return config.Default, nil
+	if flagConfig == "-" {
+		return config.LoadReader(os.Stdin)
 	}
-	return config.Load(flagConfig)
+	
+	if flagConfig != "" {
+		return config.Load(flagConfig)
+	}
+	
+	// Try config auto-discovery
+	paths := []string{
+		".polkitguard.json",
+		"config.json",
+		".config/polkitguard.json",
+		os.ExpandEnv("$HOME/.config/polkitguard.json"),
+		"/etc/polkitguard.json",
+	}
+	
+	for _, p := range paths {
+		if _, err := os.Stat(p); err == nil {
+			if cfg, err := config.Load(p); err == nil {
+				if flagVerbose {
+					fmt.Fprintf(os.Stderr, "[VERBOSE] Using config: %s\n", p)
+				}
+				return cfg, nil
+			}
+		}
+	}
+	
+	return config.Default, nil
 }
 
 func generateCompletion(shell string) {
