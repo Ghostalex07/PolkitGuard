@@ -2,7 +2,21 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.11.0] - Current Release
+## [1.12.0] - Current Release
+
+### Added
+- 10+ new detection rules (CRIT-011-012, HIGH-013-015, MED-009-010, LOW-009-010)
+- PDF export support
+- Multiple webhook URLs support (comma-separated)
+- Dockerfile + DockerHub badges in README
+- Test coverage badge placeholder
+- Detection rules badge updated to 49
+
+### Changed
+- Version bump to 1.12.0
+- Total detection rules: 49
+
+## [1.11.0] - Previous Release
 
 ### Added
 - 10 new detection rules (CRIT-009-010, HIGH-011-012, MED-007-008, LOW-007-008)

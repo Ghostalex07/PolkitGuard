@@ -15,7 +15,7 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/scanner"
 )
 
-const version = "1.11.0"
+const version = "1.12.0"
 
 var (
 	flagPath        string

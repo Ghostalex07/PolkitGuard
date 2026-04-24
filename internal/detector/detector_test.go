@@ -38,7 +38,7 @@ func TestDetectorDetectNoIssues(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity:  "unix-user:admin",
-		Action:   "org.freedesktop.systemd1",
+		Action:    "org.freedesktop.systemd1",
 		ResultAny: "auth_admin",
 	}
 	findings := d.Detect(rule)

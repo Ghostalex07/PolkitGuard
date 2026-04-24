@@ -7,7 +7,9 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Ghostalex07/PolkitGuard)](https://goreportcard.com/report/github.com/Ghostalex07/PolkitGuard)
 [![Code Size](https://img.shields.io/github/languages/code-size/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard)
 [![Last Commit](https://img.shields.io/github/last-commit/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard/commits/main)
-[![Detection Rules](https://img.shields.io/badge/Detection%20Rules-29-brightgreen)](https://github.com/Ghostalex07/PolkitGuard)
+[![Detection Rules](https://img.shields.io/badge/Detection%20Rules-49-brightgreen)](https://github.com/Ghostalex07/PolkitGuard)
+[![Test Coverage](https://img.shields.io/endpoint?url=https://ghostalex07.github.io/PolkitGuard/coverage.json)](https://github.com/Ghostalex07/PolkitGuard/actions)
+[![Docker Image](https://img.shields.io/docker/pulls/ghostalex07/polkitguard)](https://hub.docker.com/r/ghostalex07/polkitguard)
 
 **Security auditing tool for Linux Polkit policies** - Detects dangerous configurations that can lead to privilege escalation.
 

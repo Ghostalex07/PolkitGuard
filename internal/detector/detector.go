@@ -583,6 +583,105 @@ func getDetectionRules() []DetectionRule {
 					rule.ResultAny == "yes"
 			},
 		},
+		{
+			ID:             "CRIT-011",
+			Severity:       models.SeverityCritical,
+			Description:    "SUSE security policy bypass",
+			Impact:         "Can bypass SUSE security",
+			Recommendation: "Restrict SUSE policies",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "suse") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "CRIT-012",
+			Severity:       models.SeverityCritical,
+			Description:    "Alpine container root access",
+			Impact:         "Full container access",
+			Recommendation: "Restrict container access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "apparmor") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "HIGH-013",
+			Severity:       models.SeverityHigh,
+			Description:    "VirtualBox management",
+			Impact:         "Can control VirtualBox VMs",
+			Recommendation: "Restrict VM management",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "virtualbox") ||
+					strings.Contains(rule.Action, "vbox")
+			},
+		},
+		{
+			ID:             "HIGH-014",
+			Severity:       models.SeverityHigh,
+			Description:    "VMware management",
+			Impact:         "Can control VMware VMs",
+			Recommendation: "Restrict VM management",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "vmware") ||
+					strings.Contains(rule.Action, "vmtools")
+			},
+		},
+		{
+			ID:             "HIGH-015",
+			Severity:       models.SeverityHigh,
+			Description:    "Docker container management",
+			Impact:         "Can manage containers",
+			Recommendation: "Restrict container mgmt",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "docker") &&
+					!strings.Contains(rule.Action, "org.freedesktop")
+			},
+		},
+		{
+			ID:             "MED-009",
+			Severity:       models.SeverityMedium,
+			Description:    "CUPS printer management",
+			Impact:         "Can manage printers",
+			Recommendation: "Restrict printer access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "cups") ||
+					strings.Contains(rule.Action, "printer")
+			},
+		},
+		{
+			ID:             "MED-010",
+			Severity:       models.SeverityMedium,
+			Description:    "NetworkManager privileges",
+			Impact:         "Can modify network",
+			Recommendation: "Restrict network changes",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "NetworkManager") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "LOW-009",
+			Severity:       models.SeverityLow,
+			Description:    "Legacy action reference",
+			Impact:         "Using deprecated action",
+			Recommendation: "Update to current actions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "deprecated") ||
+					strings.Contains(rule.Action, ".obsolete")
+			},
+		},
+		{
+			ID:             "LOW-010",
+			Severity:       models.SeverityLow,
+			Description:    "Admin group without explicit result",
+			Impact:         "May allow admin group",
+			Recommendation: "Use explicit auth result",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Identity, "unix-group:wheel") &&
+					rule.ResultAny == ""
+			},
+		},
 	}
 }
 

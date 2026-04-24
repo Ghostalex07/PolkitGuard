@@ -32,7 +32,7 @@ type CustomRule struct {
 
 func (c *Config) Validate() error {
 	validSeverity := map[string]bool{"low": true, "medium": true, "high": true, "critical": true}
-	validFormat := map[string]bool{"text": true, "json": true, "html": true, "sarif": true, "csv": true}
+	validFormat := map[string]bool{"text": true, "json": true, "html": true, "sarif": true, "csv": true, "pdf": true}
 
 	if c.SeverityFilter != "" && !validSeverity[c.SeverityFilter] {
 		return &ConfigError{Field: "severity_filter", Value: c.SeverityFilter}
@@ -102,7 +102,7 @@ func (c *Config) Save(path string) error {
 }
 
 var Default = &Config{
-	Version:        "1.11.0",
+	Version:        "1.12.0",
 	SeverityFilter: "low",
 	OutputFormat:   "text",
 	Verbose:        false,

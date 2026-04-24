@@ -5,15 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 )
 
 type WebhookConfig struct {
-	URL         string `json:"url"`
-	Secret      string `json:"secret,omitempty"`
-	MinSeverity string `json:"min_severity,omitempty"`
+	URL         string   `json:"url"`
+	URLs        []string `json:"urls,omitempty"`
+	Secret      string   `json:"secret,omitempty"`
+	MinSeverity string   `json:"min_severity,omitempty"`
 }
 
 type WebhookPayload struct {
@@ -41,11 +43,18 @@ type Finding struct {
 }
 
 func NewWebhookNotifier(url string) *WebhookConfig {
+	if strings.Contains(url, ",") {
+		return &WebhookConfig{URLs: strings.Split(url, ",")}
+	}
 	return &WebhookConfig{URL: url}
 }
 
 func (w *WebhookConfig) Notify(result models.ScanResult) error {
-	if w.URL == "" {
+	urls := w.URLs
+	if len(urls) == 0 && w.URL != "" {
+		urls = []string{w.URL}
+	}
+	if len(urls) == 0 {
 		return fmt.Errorf("webhook URL not configured")
 	}
 
@@ -62,7 +71,7 @@ func (w *WebhookConfig) Notify(result models.ScanResult) error {
 	}
 
 	payload := WebhookPayload{
-		Version:   "1.11.0",
+		Version:   "1.12.0",
 		Timestamp: time.Now().UTC(),
 		Summary:   summary,
 	}
@@ -72,13 +81,27 @@ func (w *WebhookConfig) Notify(result models.ScanResult) error {
 		return fmt.Errorf("failed to marshal payload: %w", err)
 	}
 
-	req, err := http.NewRequest("POST", w.URL, bytes.NewBuffer(data))
+	var errors []string
+	for _, url := range urls {
+		if err := sendToURL(url, w.Secret, data); err != nil {
+			errors = append(errors, err.Error())
+		}
+	}
+	if len(errors) > 0 {
+		return fmt.Errorf("webhook errors: %s", strings.Join(errors, "; "))
+	}
+
+	return nil
+}
+
+func sendToURL(url, secret string, data []byte) error {
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	if w.Secret != "" {
-		req.Header.Set("X-Webhook-Secret", w.Secret)
+	if secret != "" {
+		req.Header.Set("X-Webhook-Secret", secret)
 	}
 
 	client := &http.Client{Timeout: 10 * time.Second}
@@ -96,7 +119,7 @@ func (w *WebhookConfig) Notify(result models.ScanResult) error {
 }
 
 func (w *WebhookConfig) Validate() error {
-	if w.URL == "" {
+	if w.URL == "" && len(w.URLs) == 0 {
 		return fmt.Errorf("webhook URL is required")
 	}
 	return nil
