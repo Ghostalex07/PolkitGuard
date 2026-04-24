@@ -62,7 +62,7 @@ func (w *WebhookConfig) Notify(result models.ScanResult) error {
 	}
 
 	payload := WebhookPayload{
-		Version:   "1.9.0",
+		Version:   "1.11.0",
 		Timestamp: time.Now().UTC(),
 		Summary:   summary,
 	}

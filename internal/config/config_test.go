@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -51,8 +52,8 @@ func TestLoadFileNotFound(t *testing.T) {
 }
 
 func TestDefault(t *testing.T) {
-	if Default.Version != "1.6.0" {
-		t.Errorf("Expected default version 1.6.0, got %s", Default.Version)
+	if Default.Version != "1.11.0" {
+		t.Errorf("Expected default version 1.11.0, got %s", Default.Version)
 	}
 }
 
@@ -98,5 +99,41 @@ func TestConfigValidateInvalidRuleID(t *testing.T) {
 	err := cfg.Validate()
 	if err == nil {
 		t.Error("Expected error for invalid rule ID")
+	}
+}
+
+func TestLoadReader(t *testing.T) {
+	content := `{"version": "1.0.0", "severity_filter": "medium"}`
+	cfg, err := LoadReader(strings.NewReader(content))
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if cfg.Version != "1.0.0" {
+		t.Errorf("expected version 1.0.0, got %s", cfg.Version)
+	}
+}
+
+func TestLoadReaderInvalid(t *testing.T) {
+	_, err := LoadReader(strings.NewReader("invalid json"))
+	if err == nil {
+		t.Error("expected error for invalid JSON")
+	}
+}
+
+func TestConfigSave(t *testing.T) {
+	cfg := &Config{
+		Version:        "1.0.0",
+		SeverityFilter: "high",
+	}
+	tmpFile, err := os.CreateTemp("", "config-*.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove(tmpFile.Name())
+	tmpFile.Close()
+
+	err = cfg.Save(tmpFile.Name())
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
 }

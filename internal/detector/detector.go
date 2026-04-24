@@ -495,6 +495,94 @@ func getDetectionRules() []DetectionRule {
 					rule.ResultAny != "auth_admin"
 			},
 		},
+		{
+			ID:             "LOW-007",
+			Severity:       models.SeverityLow,
+			Description:    "Undefined ResultAny fallback",
+			Impact:         "May cause unexpected behavior",
+			Recommendation: "Explicit ResultAny recommended",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.ResultAny == "" &&
+					(rule.ResultActive != "" || rule.ResultInactive != "")
+			},
+		},
+		{
+			ID:             "LOW-008",
+			Severity:       models.SeverityLow,
+			Description:    "Very broad action prefix",
+			Impact:         "May match unintended actions",
+			Recommendation: "Use specific action prefixes",
+			Check: func(rule models.PolkitRule) bool {
+				return len(rule.Action) > 5 &&
+					strings.HasPrefix(rule.Action, "org.")
+			},
+		},
+		{
+			ID:             "MED-007",
+			Severity:       models.SeverityMedium,
+			Description:    "Conflicting authentication modes",
+			Impact:         "May bypass security checks",
+			Recommendation: "Use consistent auth modes",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.ResultAny, "auth_admin") &&
+					rule.ResultActive == "yes"
+			},
+		},
+		{
+			ID:             "MED-008",
+			Severity:       models.SeverityMedium,
+			Description:    "Missing Identity in explicit rule",
+			Impact:         "Rule may not apply correctly",
+			Recommendation: "Define explicit identity",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Identity == "" && rule.Raw != "" &&
+					!strings.Contains(rule.Raw, "return")
+			},
+		},
+		{
+			ID:             "HIGH-011",
+			Severity:       models.SeverityHigh,
+			Description:    "Logind session management",
+			Impact:         "Can manage user sessions",
+			Recommendation: "Restrict to admins",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "logind") ||
+					strings.Contains(rule.Action, "login1")
+			},
+		},
+		{
+			ID:             "HIGH-012",
+			Severity:       models.SeverityHigh,
+			Description:    "DeviceKit storage management",
+			Impact:         "Can access/modify storage",
+			Recommendation: "Restrict storage access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "devicekit") ||
+					strings.Contains(rule.Action, "udisks")
+			},
+		},
+		{
+			ID:             "CRIT-009",
+			Severity:       models.SeverityCritical,
+			Description:    "PolicyKit genie unrestricted",
+			Impact:         "Full system access via genie",
+			Recommendation: "Restrict genie access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "polkit-genie") ||
+					strings.Contains(rule.Action, "genie")
+			},
+		},
+		{
+			ID:             "CRIT-010",
+			Severity:       models.SeverityCritical,
+			Description:    "KDE kscreensaver unrestricted",
+			Impact:         "Can bypass screen lock",
+			Recommendation: "Require auth for screen unlock",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "kscreensaver") &&
+					rule.ResultAny == "yes"
+			},
+		},
 	}
 }
 

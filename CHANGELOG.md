@@ -2,7 +2,23 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.10.0] - Current Release
+## [1.11.0] - Current Release
+
+### Added
+- 10 new detection rules (CRIT-009-010, HIGH-011-012, MED-007-008, LOW-007-008)
+- Scanner tests (69.7% coverage)
+- Config tests (78.8% coverage)
+- Benchmarks in CI
+- Version sync across all packages
+
+### Improved
+- Test coverage (config 52%→79%, scanner 27%→70%)
+- CI/CD with benchmarks
+
+### Changed
+- Version bump to 1.11.0
+
+## [1.10.0] - Previous Release
 
 ### Added
 - 5 new detection rules (CRIT-008, HIGH-010, MED-006, LOW-006)

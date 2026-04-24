@@ -73,3 +73,12 @@ jobs:
 
     - name: Vet
       run: go vet ./...
+
+    - name: Run benchmarks
+      run: go test -bench=. -benchmem ./internal/detector/... >> bench.txt
+
+    - name: Upload benchmarks
+      uses: actions/upload-artifact@v4
+      with:
+        name: bench
+        path: bench.txt
