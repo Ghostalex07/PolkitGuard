@@ -196,7 +196,7 @@ func (d *Detector) Detect(rule models.PolkitRule) []models.Finding {
 			findings = append(findings, models.Finding{
 				Severity:       detectionRule.Severity,
 				File:           rule.File,
-				Rule:           rule.RuleName,
+				RuleName:       rule.RuleName,
 				Message:        detectionRule.Description,
 				Impact:         detectionRule.Impact,
 				Recommendation: detectionRule.Recommendation,
