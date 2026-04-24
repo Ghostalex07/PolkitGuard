@@ -55,3 +55,48 @@ func TestDefault(t *testing.T) {
 		t.Errorf("Expected default version 1.0.0, got %s", Default.Version)
 	}
 }
+
+func TestConfigValidate(t *testing.T) {
+	cfg := &Config{
+		SeverityFilter: "high",
+		OutputFormat: "json",
+	}
+
+	err := cfg.Validate()
+	if err != nil {
+		t.Errorf("Expected valid config, got error: %v", err)
+	}
+}
+
+func TestConfigValidateInvalidSeverity(t *testing.T) {
+	cfg := &Config{
+		SeverityFilter: "invalid",
+	}
+
+	err := cfg.Validate()
+	if err == nil {
+		t.Error("Expected error for invalid severity")
+	}
+}
+
+func TestConfigValidateRuleIDs(t *testing.T) {
+	cfg := &Config{
+		ExcludeRules: []string{"CRIT-001", "HIGH-001"},
+	}
+
+	err := cfg.Validate()
+	if err != nil {
+		t.Errorf("Expected valid rule IDs, got error: %v", err)
+	}
+}
+
+func TestConfigValidateInvalidRuleID(t *testing.T) {
+	cfg := &Config{
+		ExcludeRules: []string{"INVALID"},
+	}
+
+	err := cfg.Validate()
+	if err == nil {
+		t.Error("Expected error for invalid rule ID")
+	}
+}

@@ -69,15 +69,20 @@ func (r *Reporter) Output(result models.ScanResult, format string) {
 		return findings[i].Severity > findings[j].Severity
 	})
 
-	if format == "json" {
+	r.outputByFormat(findings, stats, format)
+}
+
+func (r *Reporter) outputByFormat(findings []models.Finding, stats ReportStats, format string) {
+	switch format {
+	case "json":
 		r.outputJSON(findings, stats)
-	} else if format == "html" {
+	case "html":
 		r.outputHTML(findings, stats)
-	} else if format == "sarif" {
+	case "sarif":
 		r.outputSARIF(findings, stats)
-	} else if format == "csv" {
+	case "csv":
 		r.outputCSV(findings, stats)
-	} else {
+	default:
 		r.outputText(findings, stats)
 	}
 }

@@ -3,18 +3,54 @@ package config
 import (
 	"encoding/json"
 	"os"
+	"regexp"
 )
 
 type Config struct {
-	Version         string            `json:"version"`
-	SeverityFilter   string           `json:"severity_filter,omitempty"`
-	OutputFormat   string           `json:"output_format,omitempty"`
-	CustomPaths    []string         `json:"custom_paths,omitempty"`
-	ExcludeRules  []string         `json:"exclude_rules,omitempty"`
-	EnableRules   []string         `json:"enable_rules,omitempty"`
-	IgnorePaths  []string         `json:"ignore_paths,omitempty"`
-	Verbose      bool             `json:"verbose,omitempty"`
-	Quiet        bool             `json:"quiet,omitempty"`
+	Version        string   `json:"version"`
+	SeverityFilter  string   `json:"severity_filter,omitempty"`
+	OutputFormat  string   `json:"output_format,omitempty"`
+	CustomPaths  []string `json:"custom_paths,omitempty"`
+	ExcludeRules []string `json:"exclude_rules,omitempty"`
+	EnableRules  []string `json:"enable_rules,omitempty"`
+	IgnorePaths  []string `json:"ignore_paths,omitempty"`
+	Verbose     bool     `json:"verbose,omitempty"`
+	Quiet       bool     `json:"quiet,omitempty"`
+}
+
+func (c *Config) Validate() error {
+	validSeverity := map[string]bool{"low": true, "medium": true, "high": true, "critical": true}
+	validFormat := map[string]bool{"text": true, "json": true, "html": true, "sarif": true, "csv": true}
+
+	if c.SeverityFilter != "" && !validSeverity[c.SeverityFilter] {
+		return &ConfigError{Field: "severity_filter", Value: c.SeverityFilter}
+	}
+	if c.OutputFormat != "" && !validFormat[c.OutputFormat] {
+		return &ConfigError{Field: "output_format", Value: c.OutputFormat}
+	}
+
+	ruleID := regexp.MustCompile(`^(CRIT|HIGH|MED|LOW)-[0-9]{3}$`)
+	for _, r := range c.ExcludeRules {
+		if !ruleID.MatchString(r) {
+			return &ConfigError{Field: "exclude_rules", Value: r}
+		}
+	}
+	for _, r := range c.EnableRules {
+		if !ruleID.MatchString(r) {
+			return &ConfigError{Field: "enable_rules", Value: r}
+		}
+	}
+
+	return nil
+}
+
+type ConfigError struct {
+	Field string
+	Value string
+}
+
+func (e *ConfigError) Error() string {
+	return "invalid config: field '" + e.Field + "' has invalid value '" + e.Value + "'"
 }
 
 func Load(path string) (*Config, error) {

@@ -155,6 +155,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := cfg.Validate(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error validating config: %v\n", err)
+		os.Exit(1)
+	}
+
 	if flagHelp || flag.NFlag() == 0 && flag.NArg() == 0 {
 		usage()
 		os.Exit(0)
@@ -250,10 +255,6 @@ func main() {
 		fmt.Printf("Low: %d\n", stats.Low)
 	} else {
 		r.Output(result, outputFormat)
-	}
-
-	if flagOutput != "" {
-		fmt.Printf("Report saved to: %s\n", flagOutput)
 	}
 
 	// Exit codes: 0=success, 1=low, 2=medium, 3=high, 4=critical, 5=error
