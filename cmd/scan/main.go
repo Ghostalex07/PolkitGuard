@@ -24,6 +24,8 @@ var (
 	flagQuiet    bool
 	flagConfirm  bool
 	flagConfig   string
+	flagOutput   string
+	flagSummary  bool
 	format      string
 )
 
@@ -31,6 +33,8 @@ func init() {
 	flag.StringVar(&flagPath, "path", "", "Custom path to scan (default: system polkit directories)")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON)")
+	flag.StringVar(&flagOutput, "output", "", "Output file path")
+	flag.BoolVar(&flagSummary, "summary", false, "Show summary only (counts)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
 	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
@@ -158,7 +162,21 @@ func main() {
 	}
 	r := report.NewReporter(severity)
 
-	r.Output(result, outputFormat)
+	if flagSummary {
+		stats := r.CalculateStats(result)
+		fmt.Printf("Files scanned: %d\n", stats.FilesScanned)
+		fmt.Printf("Rules analyzed: %d\n", stats.RulesFound)
+		fmt.Printf("Critical: %d\n", stats.Critical)
+		fmt.Printf("High: %d\n", stats.High)
+		fmt.Printf("Medium: %d\n", stats.Medium)
+		fmt.Printf("Low: %d\n", stats.Low)
+	} else {
+		r.Output(result, outputFormat)
+	}
+
+	if flagOutput != "" {
+		fmt.Printf("Report saved to: %s\n", flagOutput)
+	}
 
 	if result.HasCritical() {
 		os.Exit(4)

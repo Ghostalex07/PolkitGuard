@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  polkitguard:
+    image: ghostalex07/polkitguard:latest
+    volumes:
+      - /etc/polkit-1:/etc/polkit-1:ro
+      - ./reports:/reports
+    environment:
+      - POLKIT_SEVERITY=medium
+      - POLKIT_FORMAT=text
+    command: --path /etc/polkit-1 --severity medium
+
+  scan:
+    image: ghostalex07/polkitguard:latest
+    volumes:
+      - ./rules:/rules:ro
+      - ./reports:/reports
+    environment:
+      - POLKIT_SEVERITY=high
+      - POLKIT_FORMAT=html
+    command: --path /rules --severity high --format html --output /reports/report.html
