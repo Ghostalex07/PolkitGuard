@@ -26,7 +26,8 @@ jobs:
         go run ./cmd/scan --path /etc/polkit-1 --format sarif -o polkit-results.sarif || true
 
     - name: Upload security results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
+      if: success() && hashFiles('polkit-results.sarif') != ''
       with:
         category: polkit
         sarif_file: polkit-results.sarif
