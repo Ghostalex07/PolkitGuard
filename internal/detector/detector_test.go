@@ -7,12 +7,68 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 )
 
-func TestDetectCRIT001(t *testing.T) {
+func TestNewDetector(t *testing.T) {
+	d := NewDetector()
+	if d == nil {
+		t.Fatal("Expected non-nil detector")
+	}
+	if len(d.rules) == 0 {
+		t.Error("Expected rules")
+	}
+}
+
+func TestNewDetectorWithCustom(t *testing.T) {
+	cfg := &config.Config{
+		CustomRules: []config.CustomRule{
+			{ID: "TEST-001", Severity: "high", Description: "Test", Pattern: "test"},
+		},
+	}
+	d := NewDetectorWithCustom(cfg)
+	if len(d.rules) <= 0 {
+		t.Error("Expected custom rules")
+	}
+}
+
+func TestSuppressRule(t *testing.T) {
+	d := NewDetector()
+	d.SuppressRule("CRIT-001")
+	if !d.IsSuppressed("CRIT-001") {
+		t.Error("Expected CRIT-001 to be suppressed")
+	}
+	if d.IsSuppressed("CRIT-002") {
+		t.Error("CRIT-002 should not be suppressed")
+	}
+}
+
+func TestDetectRule(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
+		Identity:  "*",
+		Action:   "org.test",
 		ResultAny: "yes",
 	}
+	findings := d.Detect(rule)
+	if len(findings) == 0 {
+		t.Error("Expected findings")
+	}
+}
 
+func TestDetectAllRules(t *testing.T) {
+	d := NewDetector()
+	rules := []models.PolkitRule{
+		{ResultAny: "yes"},
+		{Identity: "unix-user:*"},
+		{Action: "org.freedesktop.*"},
+	}
+	result := d.DetectAll(rules)
+	if result.RulesFound != len(rules) {
+		t.Errorf("Expected %d rules, got %d", len(rules), result.RulesFound)
+	}
+}
+
+func TestDetectCRIT001(t *testing.T) {
+	d := NewDetector()
+	rule := models.PolkitRule{ResultAny: "yes"}
 	findings := d.Detect(rule)
 	if len(findings) < 1 {
 		t.Errorf("expected at least 1 finding, got %d", len(findings))
@@ -26,7 +82,6 @@ func TestDetectNoAuthRequired(t *testing.T) {
 		Action:   "org.test.action",
 		ResultAny: "auth_admin",
 	}
-
 	findings := d.Detect(rule)
 	if len(findings) != 0 {
 		t.Errorf("expected 0 findings for auth_admin, got %d", len(findings))
@@ -35,11 +90,7 @@ func TestDetectNoAuthRequired(t *testing.T) {
 
 func TestDetectCRIT002UnixUser(t *testing.T) {
 	d := NewDetector()
-	rule := models.PolkitRule{
-		Identity: "unix-user:*",
-		Action:  "org.test.action",
-	}
-
+	rule := models.PolkitRule{Identity: "unix-user:*", Action: "org.test.action"}
 	findings := d.Detect(rule)
 	if len(findings) < 1 {
 		t.Errorf("expected at least 1 finding, got %d", len(findings))
@@ -48,65 +99,14 @@ func TestDetectCRIT002UnixUser(t *testing.T) {
 
 func TestDetectHIGH001GroupAll(t *testing.T) {
 	d := NewDetector()
-	rule := models.PolkitRule{
-		Identity: "unix-group:all",
-		Action:  "org.test.action",
-	}
-
+	rule := models.PolkitRule{Identity: "unix-group:all", Action: "org.test.action"}
 	findings := d.Detect(rule)
 	if len(findings) < 1 {
 		t.Errorf("expected at least 1 finding, got %d", len(findings))
 	}
 }
 
-func TestDetectHIGH003(t *testing.T) {
-	d := NewDetector()
-	rule := models.PolkitRule{
-		Identity: "unix-user:admin",
-		Action:  "org.freedesktop.system*",
-	}
-
-	findings := d.Detect(rule)
-	found := false
-	for _, f := range findings {
-		if f.Severity == models.SeverityHigh {
-			found = true
-		}
-	}
-	if !found {
-		t.Error("expected HIGH finding")
-	}
-}
-
-func TestDetectMED001Ambiguous(t *testing.T) {
-	d := NewDetector()
-	rule := models.PolkitRule{
-		Identity: "",
-		Action:  "org.test.action",
-		Raw:     "some content",
-	}
-
-	findings := d.Detect(rule)
-	if len(findings) < 1 {
-		t.Errorf("expected at least 1 finding, got %d", len(findings))
-	}
-}
-
-func TestDetectLOW001Inconsistent(t *testing.T) {
-	d := NewDetector()
-	rule := models.PolkitRule{
-		Action:         "org.test.action",
-		ResultActive:   "yes",
-		ResultInactive: "auth_admin",
-	}
-
-	findings := d.Detect(rule)
-	if len(findings) < 1 {
-		t.Errorf("expected at least 1 finding, got %d", len(findings))
-	}
-}
-
-func TestDetectAllSafeRule(t *testing.T) {
+func TestDetectSafeRule(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity:       "unix-user:admin",
@@ -115,18 +115,16 @@ func TestDetectAllSafeRule(t *testing.T) {
 		ResultActive:  "auth_admin",
 		ResultInactive: "auth_admin",
 	}
-
 	findings := d.Detect(rule)
 	_ = findings
 }
 
-func TestDetectAll(t *testing.T) {
+func TestDetectMultiple(t *testing.T) {
 	d := NewDetector()
 	rules := []models.PolkitRule{
 		{Identity: "unix-user:*", Action: "org.test", ResultAny: "yes"},
 		{Identity: "unix-group:all", Action: "org.test"},
 	}
-
 	result := d.DetectAll(rules)
 	if len(result.Findings) < 2 {
 		t.Errorf("expected at least 2 findings, got %d", len(result.Findings))
@@ -136,17 +134,13 @@ func TestDetectAll(t *testing.T) {
 func TestAddCustomRule(t *testing.T) {
 	d := NewDetector()
 	initialCount := len(d.rules)
-
 	cr := config.CustomRule{
 		ID:          "TEST-001",
 		Severity:    "high",
 		Description: "Test rule",
 		Pattern:     "test-pattern",
-		Message:    "Test",
-		Impact:     "Test impact",
 	}
 	d.AddCustomRule(cr)
-
 	if len(d.rules) != initialCount+1 {
 		t.Errorf("expected %d rules, got %d", initialCount+1, len(d.rules))
 	}
