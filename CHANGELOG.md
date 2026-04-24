@@ -2,6 +2,15 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.8.0] - Phase 4 Complete
+
+### Added
+- Watch mode for continuous monitoring (internal/watcher)
+- False positive suppression (SuppressRule method)
+- CIS Benchmarks compliance checks (internal/cis)
+- Severity scoring (CalculateScore)
+- Config file support
+
 ## [0.7.0] - Phase 4: Growth
 
 ### Added

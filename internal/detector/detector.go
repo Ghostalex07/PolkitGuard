@@ -6,7 +6,38 @@ import (
 )
 
 type Detector struct {
-	rules []DetectionRule
+	rules           []DetectionRule
+	suppressedRules []string
+}
+
+type DetectionRule struct {
+	ID             string
+	Severity        models.Severity
+	Description    string
+	Impact         string
+	Recommendation string
+	Check         func(rule models.PolkitRule) bool
+}
+
+func NewDetector() *Detector {
+	d := &Detector{
+		rules:           getDetectionRules(),
+		suppressedRules: []string{},
+	}
+	return d
+}
+
+func (d *Detector) SuppressRule(ruleID string) {
+	d.suppressedRules = append(d.suppressedRules, ruleID)
+}
+
+func (d *Detector) IsSuppressed(ruleID string) bool {
+	for _, id := range d.suppressedRules {
+		if id == ruleID {
+			return true
+		}
+	}
+	return false
 }
 
 type DetectionRule struct {
@@ -192,15 +223,20 @@ func (d *Detector) Detect(rule models.PolkitRule) []models.Finding {
 	var findings []models.Finding
 
 	for _, detectionRule := range d.rules {
+		if d.IsSuppressed(detectionRule.ID) {
+			continue
+		}
 		if detectionRule.Check(rule) {
-			findings = append(findings, models.Finding{
+			finding := models.Finding{
 				Severity:       detectionRule.Severity,
 				File:           rule.File,
 				RuleName:       rule.RuleName,
 				Message:        detectionRule.Description,
 				Impact:         detectionRule.Impact,
 				Recommendation: detectionRule.Recommendation,
-			})
+			}
+			finding.CalculateScore()
+			findings = append(findings, finding)
 		}
 	}
 
