@@ -51,8 +51,8 @@ func TestLoadFileNotFound(t *testing.T) {
 }
 
 func TestDefault(t *testing.T) {
-	if Default.Version != "1.0.0" {
-		t.Errorf("Expected default version 1.0.0, got %s", Default.Version)
+	if Default.Version != "1.6.0" {
+		t.Errorf("Expected default version 1.6.0, got %s", Default.Version)
 	}
 }
 
