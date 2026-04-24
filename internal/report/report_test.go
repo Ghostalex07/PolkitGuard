@@ -1,6 +1,7 @@
 package report
 
 import (
+	"os"
 	"testing"
 
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
@@ -77,5 +78,55 @@ func TestNewReporterDefault(t *testing.T) {
 	r = NewReporter(models.SeverityHigh)
 	if r.minSeverity != models.SeverityHigh {
 		t.Errorf("expected SeverityHigh, got %v", r.minSeverity)
+	}
+}
+
+func TestCalculateStatsMultipleFindings(t *testing.T) {
+	result := models.NewScanResult()
+	for i := 0; i < 3; i++ {
+		result.AddFinding(models.Finding{Severity: models.SeverityCritical})
+	}
+	for i := 0; i < 2; i++ {
+		result.AddFinding(models.Finding{Severity: models.SeverityHigh})
+	}
+	result.FilesScanned = 2
+
+	r := NewReporter(models.SeverityLow)
+	stats := r.CalculateStats(*result)
+
+	if stats.Critical != 3 {
+		t.Errorf("expected 3 critical, got %d", stats.Critical)
+	}
+	if stats.High != 2 {
+		t.Errorf("expected 2 high, got %d", stats.High)
+	}
+	if stats.Total != 5 {
+		t.Errorf("expected 5 total, got %d", stats.Total)
+	}
+}
+
+func TestOutputNoFindings(t *testing.T) {
+	oldStdout := os.Stdout
+	defer func() { os.Stdout = oldStdout }()
+
+	result := models.NewScanResult()
+	r := NewReporter(models.SeverityLow)
+	r.Output(*result, "text")
+}
+
+func TestOutputByFormat(t *testing.T) {
+	r := NewReporter(models.SeverityLow)
+	result := models.NewScanResult()
+	result.AddFinding(models.Finding{
+		Severity: models.SeverityCritical,
+		File:     "/test/policy",
+		Message:  "Test message",
+	})
+
+	tests := []string{"text", "json", "html", "csv"}
+	for _, format := range tests {
+		t.Run(format, func(t *testing.T) {
+			r.Output(*result, format)
+		})
 	}
 }

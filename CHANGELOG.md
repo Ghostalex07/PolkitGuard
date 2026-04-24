@@ -2,7 +2,20 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.9.0] - Current Release
+## [1.10.0] - Current Release
+
+### Added
+- 5 new detection rules (CRIT-008, HIGH-010, MED-006, LOW-006)
+- Notifier tests (88.9% coverage)
+- Report tests (70.8% coverage)
+- Models tests (90.9% coverage)
+- Benchmarks for detector
+- Unit tests for detector package
+
+### Changed
+- Version bump to 1.10.0
+
+## [1.9.0] - Previous Release
 
 ### Added
 - 5 new detection rules (CRIT-007, HIGH-009, MED-005, LOW-005)

@@ -104,3 +104,44 @@ func TestFindingString(t *testing.T) {
 		t.Error("Expected non-empty string")
 	}
 }
+
+func TestCountBySeverity(t *testing.T) {
+	r := NewScanResult()
+	r.AddFinding(Finding{Severity: SeverityCritical})
+	r.AddFinding(Finding{Severity: SeverityCritical})
+	r.AddFinding(Finding{Severity: SeverityHigh})
+
+	crit := r.CountBySeverity(SeverityCritical)
+	if crit != 2 {
+		t.Errorf("expected 2, got %d", crit)
+	}
+
+	high := r.CountBySeverity(SeverityHigh)
+	if high != 1 {
+		t.Errorf("expected 1, got %d", high)
+	}
+
+	low := r.CountBySeverity(SeverityLow)
+	if low != 0 {
+		t.Errorf("expected 0, got %d", low)
+	}
+}
+
+func TestSeverityColor(t *testing.T) {
+	tests := []struct {
+		sev      Severity
+		expected string
+	}{
+		{SeverityLow, "\033[34m"},
+		{SeverityMedium, "\033[33m"},
+		{SeverityHigh, "\033[35m"},
+		{SeverityCritical, "\033[31m"},
+		{Severity(99), "\033[0m"},
+	}
+
+	for _, tt := range tests {
+		if tt.sev.Color() != tt.expected {
+			t.Errorf("expected %q, got %q", tt.expected, tt.sev.Color())
+		}
+	}
+}

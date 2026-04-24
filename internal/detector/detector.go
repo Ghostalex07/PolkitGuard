@@ -449,6 +449,52 @@ func getDetectionRules() []DetectionRule {
 					rule.ResultAny == "yes"
 			},
 		},
+		{
+			ID:             "CRIT-008",
+			Severity:       models.SeverityCritical,
+			Description:    "GDM (GNOME Display Manager) unrestricted",
+			Impact:         "Can control display manager without auth",
+			Recommendation: "Restrict GDM access to admins",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "gdm") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "HIGH-010",
+			Severity:       models.SeverityHigh,
+			Description:    "Package management actions",
+			Impact:         "Can install/remove packages",
+			Recommendation: "Restrict package management",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "package") ||
+					strings.Contains(rule.Action, "apt") ||
+					strings.Contains(rule.Action, "dnf") ||
+					strings.Contains(rule.Action, "yum")
+			},
+		},
+		{
+			ID:             "MED-006",
+			Severity:       models.SeverityMedium,
+			Description:    "Timer/Job scheduling",
+			Impact:         "Can schedule jobs",
+			Recommendation: "Restrict scheduling to admins",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "timer") ||
+					strings.Contains(rule.Action, "job")
+			},
+		},
+		{
+			ID:             "LOW-006",
+			Severity:       models.SeverityLow,
+			Description:    "Session cookie access",
+			Impact:         "Can read session cookies",
+			Recommendation: "Restrict session access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "session") &&
+					rule.ResultAny != "auth_admin"
+			},
+		},
 	}
 }
 
