@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Ghostalex07/PolkitGuard/internal/config"
 	"github.com/Ghostalex07/PolkitGuard/internal/detector"
@@ -34,7 +35,7 @@ func init() {
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
 	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
 	flag.BoolVar(&flagConfirm, "y", false, "Skip confirmation prompts (auto-confirm)")
-	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif")
+	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif, csv")
 	flag.Usage = usage
 }
 
@@ -126,6 +127,16 @@ func main() {
 	var allRules []models.PolkitRule
 
 	for _, file := range files {
+		shouldIgnore := false
+		for _, pattern := range cfg.IgnorePaths {
+			if strings.Contains(file, pattern) {
+				shouldIgnore = true
+				break
+			}
+		}
+		if shouldIgnore {
+			continue
+		}
 		rules, parseErr := p.ParseFile(file)
 		if parseErr != nil {
 			continue

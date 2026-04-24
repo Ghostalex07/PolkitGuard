@@ -75,6 +75,8 @@ func (r *Reporter) Output(result models.ScanResult, format string) {
 		r.outputHTML(findings, stats)
 	} else if format == "sarif" {
 		r.outputSARIF(findings, stats)
+	} else if format == "csv" {
+		r.outputCSV(findings, stats)
 	} else {
 		r.outputText(findings, stats)
 	}
@@ -235,6 +237,27 @@ func (r *Reporter) outputSARIF(findings []models.Finding, stats ReportStats) {
 	encoder := json.NewEncoder(os.Stdout)
 	encoder.SetIndent("", "  ")
 	encoder.Encode(sarif)
+}
+
+func (r *Reporter) outputCSV(findings []models.Finding, stats ReportStats) {
+	fmt.Println("Severity,File,Rule,Message,Impact,Recommendation")
+	for _, f := range findings {
+		severity := f.Severity.String()
+		file := escapeCSV(f.File)
+		rule := escapeCSV(f.RuleName)
+		msg := escapeCSV(f.Message)
+		impact := escapeCSV(f.Impact)
+		rec := escapeCSV(f.Recommendation)
+		fmt.Printf("%s,%s,%s,%s,%s,%s\n", severity, file, rule, msg, impact, rec)
+	}
+}
+
+func escapeCSV(s string) string {
+	s = strings.ReplaceAll(s, "\"", "\"\"")
+	if strings.Contains(s, ",") || strings.Contains(s, "\"") || strings.Contains(s, "\n") {
+		return "\"" + s + "\""
+	}
+	return s
 }
 
 func getSARIFLevel(s models.Severity) string {

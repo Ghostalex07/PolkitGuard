@@ -12,6 +12,7 @@ type Config struct {
 	CustomPaths    []string         `json:"custom_paths,omitempty"`
 	ExcludeRules  []string         `json:"exclude_rules,omitempty"`
 	EnableRules   []string         `json:"enable_rules,omitempty"`
+	IgnorePaths  []string         `json:"ignore_paths,omitempty"`
 	Verbose      bool             `json:"verbose,omitempty"`
 	Quiet        bool             `json:"quiet,omitempty"`
 }
