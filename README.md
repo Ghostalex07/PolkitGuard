@@ -22,7 +22,7 @@ The goal is not to build an academic tool, but a practical, clear utility that a
 
 ```bash
 # Install
-go install github.com/Ghostalex07/PolkitGuard@latest
+go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
 
 # Run
 polkitguard scan
@@ -73,7 +73,7 @@ go build -o polkitguard ./cmd/scan
 ### Using Go Install
 
 ```bash
-go install github.com/Ghostalex07/PolkitGuard@latest
+go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
 ```
 
 ---
@@ -173,7 +173,7 @@ sudo install -m 755 polkitguard /usr/local/bin/
 ### Using Go Install
 
 ```bash
-go install github.com/Ghostalex07/PolkitGuard@latest
+go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
 ```
 
 ### Arch Linux (AUR)
