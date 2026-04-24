@@ -40,22 +40,6 @@ func (d *Detector) IsSuppressed(ruleID string) bool {
 	return false
 }
 
-type DetectionRule struct {
-	ID          string
-	Severity    models.Severity
-	Description string
-	Impact      string
-	Recommendation string
-	Check       func(rule models.PolkitRule) bool
-}
-
-func NewDetector() *Detector {
-	d := &Detector{
-		rules: getDetectionRules(),
-	}
-	return d
-}
-
 func getDetectionRules() []DetectionRule {
 	return []DetectionRule{
 		{
