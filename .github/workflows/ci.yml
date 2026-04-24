@@ -7,6 +7,53 @@ on:
     branches: [main]
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Run PolkitGuard scan
+      run: |
+        go run ./cmd/scan --path /etc/polkit-1 --format sarif -o polkit-results.sarif || true
+
+    - name: Upload security results to GitHub Security tab
+      uses: github/codeql-action/upload-security-results@v2
+      with:
+        category: polkit
+        sarif_file: polkit-results.sarif
+
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ghostalex07/polkitguard:latest .
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        docker push ghcr.io/ghostalex07/polkitguard:latest
+
+    - name: Sign container image
+      run: |
+        cosign sign ghcr.io/ghostalex07/polkitguard:latest --yes
+      env:
+        COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
+
   test:
     runs-on: ubuntu-latest
 

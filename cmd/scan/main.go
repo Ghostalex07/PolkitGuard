@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -14,23 +15,24 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/scanner"
 )
 
-const version = "1.0.0"
+const version = "1.7.0"
 
 var (
-	flagPath      string
-	flagSeverity  string
-	flagHelp     bool
-	flagVerbose  bool
-	flagQuiet    bool
-	flagConfirm  bool
-	flagConfig   string
-	flagOutput   string
-	flagSummary  bool
-	flagVersion  bool
-	flagRule     string
-	flagShell    string
-	flagNoColor  bool
-	format      string
+	flagPath       string
+	flagSeverity   string
+	flagHelp      bool
+	flagVerbose   bool
+	flagQuiet     bool
+	flagConfirm   bool
+	flagConfig    string
+	flagOutput    string
+	flagSummary   bool
+	flagVersion   bool
+	flagRule      string
+	flagShell     string
+	flagNoColor   bool
+	flagCheckUpdate bool
+	format       string
 )
 
 func init() {
@@ -48,6 +50,7 @@ func init() {
 	flag.BoolVar(&flagConfirm, "y", false, "Skip confirmation prompts (auto-confirm)")
 	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif, csv")
 	flag.StringVar(&flagShell, "shell", "", "Generate shell completions (bash, zsh, fish)")
+	flag.BoolVar(&flagCheckUpdate, "check-update", false, "Check for updates")
 	flag.Usage = usage
 }
 
@@ -126,7 +129,7 @@ func generateCompletion(shell string) {
 		fmt.Println("    COMPREPLY=()")
 		fmt.Println("    cur=\"${COMP_WORDS[COMP_CWORD]}\"")
 		fmt.Println("    prev=\"${COMP_WORDS[COMP_CWORD-1]}\"")
-		fmt.Println("    opts=\"--path --severity --format --config --output --summary --version --rule --help -v -q -y\"")
+		fmt.Println("    opts=\"--path --severity --format --config --output --summary --version --rule --help -v -q -y --check-update\"")
 		fmt.Println("    COMPREPLY=( $(compgen -W \"${opts}\" -- ${cur}) )")
 		fmt.Println("    return 0")
 		fmt.Println("}")
@@ -138,33 +141,34 @@ func generateCompletion(shell string) {
 		fmt.Println("    opts=('(--path)'{path}'[Custom path]'")
 		fmt.Println("           '(--severity)'{severity}'[Severity level]'")
 		fmt.Println("           '(--format)'{format}'[Output format]'")
-		fmt.Println("           '(--config)'{config}'[Config file]'")
-		fmt.Println("           '(--output)'{output}'[Output file]'")
-		fmt.Println("           '(--summary)'{summary}'[Summary only]'")
-		fmt.Println("           '(--version)'{version}'[Show version]'")
-		fmt.Println("           '(--rule)'{rule}'[Filter by rule ID]'")
-		fmt.Println("           '(-v)'{v}'[Verbose]'")
-		fmt.Println("           '(-q)'{q}'[Quiet]'")
-		fmt.Println("           '(-y)'{y}'[Auto-confirm]')")
+		fmt.Println("           '(--check-update)'{'check-update}'[Check for updates]')")
 		fmt.Println("    _describe 'option' opts")
 		fmt.Println("}")
-		fmt.Println("_compdef _polkitguard polkitguard")
+		fmt.Println("compdef _polkitguard polkitguard")
 	case "fish":
 		fmt.Println("# Fish completion for polkitguard")
 		fmt.Println("complete -c polkitguard -l path -d 'Custom path to scan'")
-		fmt.Println("complete -c polkitguard -l severity -d 'Severity level' -a 'low medium high critical'")
-		fmt.Println("complete -c polkitguard -l format -d 'Output format' -a 'text json html sarif csv'")
-		fmt.Println("complete -c polkitguard -l config -d 'Config file'")
-		fmt.Println("complete -c polkitguard -l output -d 'Output file'")
-		fmt.Println("complete -c polkitguard -l summary -d 'Show summary only'")
-		fmt.Println("complete -c polkitguard -l version -d 'Show version'")
-		fmt.Println("complete -c polkitguard -l rule -d 'Filter by rule ID'")
-		fmt.Println("complete -c polkitguard -s v -l verbose -d 'Verbose output'")
-		fmt.Println("complete -c polkitguard -s q -l quiet -d 'Quiet mode'")
-		fmt.Println("complete -c polkitguard -s y -d 'Auto-confirm'")
+		fmt.Println("complete -c polkitguard -l check-update -d 'Check for updates'")
 	default:
 		fmt.Fprintf(os.Stderr, "Unsupported shell: %s (supported: bash, zsh, fish)\n", shell)
 		os.Exit(1)
+	}
+}
+
+func checkForUpdate() {
+	fmt.Printf("Current version: %s\n", version)
+
+	resp, err := http.Get("https://api.github.com/repos/Ghostalex07/PolkitGuard/releases/latest")
+	if err != nil {
+		fmt.Printf("Could not check for updates: %v\n", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == 200 {
+		fmt.Println("You are running the latest version!")
+	} else if resp.StatusCode == 404 {
+		fmt.Println("Could not find release information")
 	}
 }
 
@@ -178,6 +182,11 @@ func main() {
 
 	if flagShell != "" {
 		generateCompletion(flagShell)
+		os.Exit(0)
+	}
+
+	if flagCheckUpdate {
+		checkForUpdate()
 		os.Exit(0)
 	}
 
