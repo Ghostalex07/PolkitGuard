@@ -52,7 +52,7 @@ type Finding struct {
 }
 
 func (f Finding) String() string {
-	return fmt.Sprintf("[%s] %s\n  Rule: %s\n  Message: %s\n  Impact: %s\n  Recommendation: %s\n  Score: %d\n",
+	return fmt.Sprintf("[%s] %s\n  RuleName: %s\n  Message: %s\n  Impact: %s\n  Recommendation: %s\n  Score: %d\n",
 		f.Severity.String(), f.File, f.RuleName, f.Message, f.Impact, f.Recommendation, f.Score)
 }
 
