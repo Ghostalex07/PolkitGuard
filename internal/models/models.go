@@ -49,6 +49,7 @@ type Finding struct {
 	Impact          string
 	Recommendation  string
 	Score         int
+	CVE           string
 }
 
 func (f Finding) String() string {

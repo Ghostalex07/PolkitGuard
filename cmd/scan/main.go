@@ -34,7 +34,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&flagPath, "path", "", "Custom path to scan (default: system polkit directories)")
+	flag.StringVar(&flagPath, "path", "", "Custom path to scan (comma-separated for multiple)")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON), use '-' for stdin")
 	flag.StringVar(&flagOutput, "output", "", "Output file path")
@@ -210,22 +210,37 @@ func main() {
 	var files []string
 	var scanErr error
 
+	paths := strings.Split(flagPath, ",")
+	
 	if flagPath != "" {
 		s := scanner.NewScanner(nil)
-		files, scanErr = s.ScanDirectory(flagPath)
+		for _, p := range paths {
+			p = strings.TrimSpace(p)
+			if p == "" {
+				continue
+			}
+			f, err := s.ScanDirectory(p)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error scanning %s: %v\n", p, err)
+				continue
+			}
+			files = append(files, f...)
+		}
+		if len(files) == 0 {
+			fmt.Println("No polkit rule files found.")
+			os.Exit(0)
+		}
 	} else {
 		s := scanner.NewScanner(nil)
 		files, scanErr = s.Scan()
-	}
-
-	if scanErr != nil {
-		fmt.Fprintf(os.Stderr, "Error scanning: %v\n", scanErr)
-		os.Exit(1)
-	}
-
-	if len(files) == 0 {
-		fmt.Println("No polkit rule files found.")
-		os.Exit(0)
+		if scanErr != nil {
+			fmt.Fprintf(os.Stderr, "Error scanning: %v\n", scanErr)
+			os.Exit(1)
+		}
+		if len(files) == 0 {
+			fmt.Println("No polkit rule files found.")
+			os.Exit(0)
+		}
 	}
 
 	fmt.Printf("Found %d rule file(s)\n\n", len(files))

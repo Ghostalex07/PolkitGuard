@@ -1,6 +1,9 @@
 package detector
 
 import (
+	"regexp"
+
+	"github.com/Ghostalex07/PolkitGuard/internal/config"
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 	"strings"
 )
@@ -16,6 +19,7 @@ type DetectionRule struct {
 	Description    string
 	Impact         string
 	Recommendation string
+	CVE           string
 	Check         func(rule models.PolkitRule) bool
 }
 
@@ -25,6 +29,39 @@ func NewDetector() *Detector {
 		suppressedRules: []string{},
 	}
 	return d
+}
+
+func NewDetectorWithCustom(cfg *config.Config) *Detector {
+	d := NewDetector()
+	for _, cr := range cfg.CustomRules {
+		d.AddCustomRule(cr)
+	}
+	return d
+}
+
+func (d *Detector) AddCustomRule(cr config.CustomRule) {
+	sev := models.SeverityLow
+	switch cr.Severity {
+	case "critical":
+		sev = models.SeverityCritical
+	case "high":
+		sev = models.SeverityHigh
+	case "medium":
+		sev = models.SeverityMedium
+	}
+
+	pattern := cr.Pattern
+	d.rules = append(d.rules, DetectionRule{
+		ID:          cr.ID,
+		Severity:     sev,
+		Description: cr.Description,
+		Impact:     cr.Impact,
+		Recommendation: cr.Recommendation,
+		Check: func(rule models.PolkitRule) bool {
+			re := regexp.MustCompile(pattern)
+			return re.MatchString(rule.Raw) || re.MatchString(rule.Action)
+		},
+	})
 }
 
 func (d *Detector) SuppressRule(ruleID string) {
@@ -269,45 +306,105 @@ func getDetectionRules() []DetectionRule {
 			Description:    "Poorly named rule file",
 			Impact:         "Difficult to identify rule purpose",
 			Recommendation: "Use descriptive file names",
-			Check: func(rule models.PolkitRule) bool {
-				name := rule.File
-				return len(name) > 0 && len(name) < 10
+Check: func(rule models.PolkitRule) bool {
+				return rule.ResultActive != "" && rule.ResultInactive != "" &&
+					rule.ResultActive != rule.ResultInactive
 			},
 		},
-		// {
-		// 	ID:             "LOW-003",
-		// 	Severity:       models.SeverityLow,
-		// 	Description:    "Rule file without comments",
-		// 	Impact:         "Missing documentation for maintenance",
-		// 	Recommendation: "Add comments explaining rule purpose",
-		// 	Check: func(rule models.PolkitRule) bool {
-		// 		return rule.Raw != "" &&
-		// 			!strings.Contains(rule.Raw, "#")
-		// 	},
-		// },
-		// {
-		// 	ID:             "LOW-004",
-		// 	Severity:       models.SeverityLow,
-		// 	Description:    "Very short action identifier",
-		// 	Impact:         "May conflict with future actions",
-		// 	Recommendation: "Use fully qualified action names",
-		// 	Check: func(rule models.PolkitRule) bool {
-		// 		return len(rule.Action) >= 6 &&
-		// 			!strings.Contains(rule.Action, "*")
-		// 	},
-		// },
-		// {
-		// 	ID:             "LOW-005",
-		// 	Severity:       models.SeverityLow,
-		// 	Description:    "Uses deprecated authentication method",
-		// 	Impact:         "Consider using stronger auth methods",
-		// 	Recommendation: "Update to current auth standards",
-		// 	Check: func(rule models.PolkitRule) bool {
-		// 		hasStandardAuth := rule.ResultAny == "auth_admin" || rule.ResultAny == "auth_admin_keep" ||
-		// 			rule.ResultAny == "auth_any" || rule.ResultAny == "auth_keep"
-		// 		return !hasStandardAuth && strings.Contains(rule.ResultAny, "auth")
-		// 	},
-		// },
+		{
+			ID:             "CRIT-005",
+			Severity:       models.SeverityCritical,
+			Description:    "Authentication completely disabled",
+			Impact:         "Any user can perform privileged operations",
+			Recommendation: "Enable authentication",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.ResultAny, "yes") && !strings.Contains(rule.ResultAny, "auth")
+			},
+		},
+		{
+			ID:             "CRIT-006",
+			Severity:       models.SeverityCritical,
+			Description:    "Root user (euid=0) unrestricted",
+			Impact:         "Root can bypass all restrictions",
+			Recommendation: "Restrict root access explicitly",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Identity, "unix-user:0") ||
+					strings.Contains(rule.Identity, "unix-user:root")
+			},
+		},
+		{
+			ID:             "HIGH-005",
+			Severity:       models.SeverityHigh,
+			Description:    "Systemd service management",
+			Impact:         "Can modify systemd services",
+			Recommendation: "Restrict to admins only",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "systemd")
+			},
+		},
+		{
+			ID:             "HIGH-006",
+			Severity:       models.SeverityHigh,
+			Description:    "Device/Storage mounting",
+			Impact:         "Can mount devices",
+			Recommendation: "Restrict device mounting",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "mount") ||
+					strings.Contains(rule.Action, "umount")
+			},
+		},
+		{
+			ID:             "HIGH-007",
+			Severity:       models.SeverityHigh,
+			Description:    "Hardware management",
+			Impact:         "Can modify hardware settings",
+			Recommendation: "Restrict hardware access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "hardware")
+			},
+		},
+		{
+			ID:             "HIGH-008",
+			Severity:       models.SeverityHigh,
+			Description:    "Network connection management",
+			Impact:         "Can modify network settings",
+			Recommendation: "Restrict network access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "network") ||
+					strings.Contains(rule.Action, "wifi") ||
+					strings.Contains(rule.Action, "ethernet")
+			},
+		},
+		{
+			ID:             "MED-004",
+			Severity:       models.SeverityMedium,
+			Description:    "Inconsistent authentication",
+			Impact:         "Different auth levels in different states",
+			Recommendation: "Standardize authentication",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.ResultActive == "auth_admin" && rule.ResultInactive == "yes"
+			},
+		},
+		{
+			ID:             "LOW-003",
+			Severity:       models.SeverityLow,
+			Description:    "No comments in rule",
+			Impact:         "Hard to understand rule purpose",
+			Recommendation: "Add explanatory comments",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Raw != "" && !strings.Contains(rule.Raw, "#")
+			},
+		},
+		{
+			ID:             "LOW-004",
+			Severity:       models.SeverityLow,
+			Description:    "Very short action name",
+			Impact:         "May conflict with future actions",
+			Recommendation: "Use descriptive action names",
+			Check: func(rule models.PolkitRule) bool {
+				return len(rule.Action) < 10
+			},
+		},
 	}
 }
 
@@ -320,12 +417,13 @@ func (d *Detector) Detect(rule models.PolkitRule) []models.Finding {
 		}
 		if detectionRule.Check(rule) {
 			finding := models.Finding{
-				Severity:       detectionRule.Severity,
+				Severity:        detectionRule.Severity,
 				File:           rule.File,
 				RuleName:       rule.RuleName,
 				Message:        detectionRule.Description,
 				Impact:         detectionRule.Impact,
 				Recommendation: detectionRule.Recommendation,
+				CVE:           detectionRule.CVE,
 			}
 			finding.CalculateScore()
 			findings = append(findings, finding)

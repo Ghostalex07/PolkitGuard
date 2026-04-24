@@ -7,6 +7,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/Ghostalex07/PolkitGuard)](https://goreportcard.com/report/github.com/Ghostalex07/PolkitGuard)
 [![Code Size](https://img.shields.io/github/languages/code-size/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard)
 [![Last Commit](https://img.shields.io/github/last-commit/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard/commits/main)
+[![Detection Rules](https://img.shields.io/badge/Detection%20Rules-29-brightgreen)](https://github.com/Ghostalex07/PolkitGuard)
 
 **Security auditing tool for Linux Polkit policies** - Detects dangerous configurations that can lead to privilege escalation.
 
@@ -101,12 +102,12 @@ Now you can run `polkitguard` from anywhere.
 ### Critical (6 rules)
 | ID | Description |
 |----|-------------|
-| CRIT-001 | Access without authentication |
+| CRIT-001 | Access without authentication (result_any=yes) |
 | CRIT-002 | unix-user:* (any user) |
 | CRIT-003 | Service escalation patterns |
 | CRIT-004 | Network dangerous actions |
-| CRIT-005 | Root user (euid=0) unrestricted |
-| CRIT-006 | Authentication completely disabled |
+| CRIT-005 | Authentication completely disabled |
+| CRIT-006 | Root user (euid=0) unrestricted |
 
 ### High (8 rules)
 | ID | Description |
@@ -115,10 +116,10 @@ Now you can run `polkitguard` from anywhere.
 | HIGH-002 | Wildcard action patterns |
 | HIGH-003 | org.freedesktop.* broad matches |
 | HIGH-004 | Permissive session check |
-| HIGH-005 | Disk/Storage mounting |
-| HIGH-006 | Systemd service management |
-| HIGH-007 | Power management (reboot/shutdown) |
-| HIGH-008 | KDE/Gnome session actions |
+| HIGH-005 | Systemd service management |
+| HIGH-006 | Device/Storage mounting |
+| HIGH-007 | Hardware management |
+| HIGH-008 | Network connection management |
 
 ### Medium (4 rules)
 | ID | Description |
@@ -126,7 +127,7 @@ Now you can run `polkitguard` from anywhere.
 | MED-001 | Ambiguous identity |
 | MED-002 | Redundant rules |
 | MED-003 | Contradictory rules |
-| MED-004 | Deprecated authentication method |
+| MED-004 | Inconsistent authentication |
 
 ### Low (5 rules)
 | ID | Description |
@@ -134,10 +135,9 @@ Now you can run `polkitguard` from anywhere.
 | LOW-001 | Inconsistent results |
 | LOW-002 | Poorly named files |
 | LOW-003 | No comments |
-| LOW-004 | Short action identifier |
-| LOW-005 | Deprecated auth method |
+| LOW-004 | Short action name |
 
-**Total: 23 Detection Rules**
+**Total: 29 Detection Rules**
 
 ---
 
