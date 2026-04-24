@@ -405,6 +405,50 @@ func getDetectionRules() []DetectionRule {
 				return len(rule.Action) < 10
 			},
 		},
+		{
+			ID:             "LOW-005",
+			Severity:       models.SeverityLow,
+			Description:    "No ResultAny specified",
+			Impact:         "Undefined fallback behavior",
+			Recommendation: "Specify explicit ResultAny",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.ResultAny == "" && rule.ResultActive == "" && rule.ResultInactive == ""
+			},
+		},
+		{
+			ID:             "MED-005",
+			Severity:       models.SeverityMedium,
+			Description:    "Multiple rules for same action",
+			Impact:         "Potential conflicts in authorization",
+			Recommendation: "Consolidate rules for same action",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "org.freedesktop.login1") &&
+					strings.Contains(rule.Raw, "result_")
+			},
+		},
+		{
+			ID:             "HIGH-009",
+			Severity:       models.SeverityHigh,
+			Description:    "Power management actions",
+			Impact:         "Can power off or reboot system",
+			Recommendation: "Restrict power actions to admins",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "power") ||
+					strings.Contains(rule.Action, "reboot") ||
+					strings.Contains(rule.Action, "suspend")
+			},
+		},
+		{
+			ID:             "CRIT-007",
+			Severity:       models.SeverityCritical,
+			Description:    "Console kit unrestricted",
+			Impact:         "Can access console without auth",
+			Recommendation: "Require admin auth for console",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "consolekit") &&
+					rule.ResultAny == "yes"
+			},
+		},
 	}
 }
 

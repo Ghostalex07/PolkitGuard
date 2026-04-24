@@ -133,3 +133,13 @@ func (sr *ScanResult) HasMedium() bool {
 	}
 	return false
 }
+
+func (sr *ScanResult) CountBySeverity(sev Severity) int {
+	count := 0
+	for _, f := range sr.Findings {
+		if f.Severity == sev {
+			count++
+		}
+	}
+	return count
+}

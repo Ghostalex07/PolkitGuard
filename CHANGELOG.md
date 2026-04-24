@@ -2,7 +2,22 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.8.0] - Current Release
+## [1.9.0] - Current Release
+
+### Added
+- 5 new detection rules (CRIT-007, HIGH-009, MED-005, LOW-005)
+- Webhook notifications (notifier package)
+- JSON Schema for config validation
+- Cron script for automated scanning
+- Unit tests for report package
+
+### Changed
+- Version bump to 1.9.0
+
+### Fixed
+- CountBySeverity method added to ScanResult
+
+## [1.8.0] - Previous Release
 
 ### Added
 - Example configs for common distros (Debian, Ubuntu, RHEL, Fedora)
