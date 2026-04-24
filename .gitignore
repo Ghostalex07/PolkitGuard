@@ -1,0 +1,24 @@
+# Binaries
+polkitguard
+bin/
+*.exe
+
+# Go
+*.test
+coverage.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
