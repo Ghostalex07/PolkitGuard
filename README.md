@@ -4,160 +4,160 @@
 [![Go Version](https://img.shields.io/go.mod/go-version/Ghostalex07/PolkitGuard)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Security auditing tool for Linux Polkit policies** - Detecta configuraciones peligrosas que pueden permitir escalada de privilegios.
+**Security auditing tool for Linux Polkit policies** - Detects dangerous configurations that can lead to privilege escalation.
 
 ---
 
-## Instalación Rápida
+## Quick Installation
 
-### Opción 1: Desde código fuente (recomendado)
+### Option 1: From Source (Recommended)
 
 ```bash
 git clone https://github.com/Ghostalex07/PolkitGuard.git
 cd PolkitGuard
 go build -o polkitguard ./cmd/scan
 
-# Ejecutar
+# Run
 ./polkitguard scan
 ```
 
-### Opción 2: Con Go
+### Option 2: With Go
 
 ```bash
 go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
 polkitguard scan
 ```
 
-### Opción 3: Descargar binario
+### Option 3: Download Binary
 
-Ve a [Releases](https://github.com/Ghostalex07/PolkitGuard/releases) y descarga el binario para tu plataforma.
+Go to [Releases](https://github.com/Ghostalex07/PolkitGuard/releases) and download the binary for your platform.
 
 ---
 
-## Uso
+## Usage
 
-### Básico
+### Basic
 
 ```bash
-./polkitguard scan                    # Escanear sistema
-./polkitguard --severity high        # Solo CRITICAL y HIGH
-./polkitguard --format json          # Output JSON
-./polkitguard --format html          # Output HTML
+./polkitguard scan                    # Scan system
+./polkitguard --severity high        # Only CRITICAL and HIGH
+./polkitguard --format json          # JSON output
+./polkitguard --format html          # HTML output
 ```
 
-### Opciones
+### Options
 
-| Flag | Descripción | Ejemplo |
+| Flag | Description | Example |
 |------|-------------|---------|
-| `--path` | Directorio a escanear | `--path /etc/polkit` |
-| `--severity` | Filtrar por severidad | `--severity high` |
-| `--format` | Formato de salida | `--format json` |
-| `-q` | Modo silencioso | `-q` |
+| `--path` | Directory to scan | `--path /etc/polkit` |
+| `--severity` | Filter by severity | `--severity high` |
+| `--format` | Output format | `--format json` |
+| `-q` | Quiet mode | `-q` |
 | `-v` | Verbose | `-v` |
-| `-y` | Auto-confirmar | `-y` |
+| `-y` | Auto-confirm | `-y` |
 
-### Códigos de salida
+### Exit Codes
 
-| Código | Significado |
-|--------|-------------|
-| 0 | Sin problemas |
+| Code | Meaning |
+|------|---------|
+| 0 | No issues |
 | 1 | Low |
 | 2 | Medium |
 | 3 | High |
 | 4 | Critical |
 
 ```bash
-# Ejemplo en CI/CD
+# Example in CI/CD
 ./polkitguard -q
 if [ $? -eq 4 ]; then
-    echo "¡CRITICAL ISSUES FOUND!"
+    echo "CRITICAL ISSUES FOUND!"
     exit 1
 fi
 ```
 
 ---
 
-## Instalación en Sistema
+## Install on System
 
 ```bash
-# Compilar
+# Build
 go build -o polkitguard ./cmd/scan
 
-# Instalar (como root)
+# Install (as root)
 sudo cp polkitguard /usr/local/bin/
 sudo chmod 755 /usr/local/bin/polkitguard
 ```
 
-Ahora可直接 ejecutar `polkitguard` desde cualquier位置.
+Now you can run `polkitguard` from anywhere.
 
 ---
 
-## Qué Detecta
+## What It Detects
 
 ### Critical
-- Acceso sin autenticación
-- unix-user:* (cualquier usuario)
+- Access without authentication
+- unix-user:* (any user)
 
 ### High
 - unix-group:all
-- Acciones con wildcards (*)
-- org.freedesktop.* demasiado amplio
+- Actions with wildcards (*)
+- org.freedesktop.* too broad
 
 ### Medium
-- Identidad ambigua
-- Reglas redundantes
+- Ambiguous identity
+- Redundant rules
 
 ### Low
-- Resultados inconsistentes
-- Archivos sin comentarios
+- Inconsistent results
+- Files without comments
 
 ---
 
-## Estructura del Proyecto
+## Project Structure
 
 ```
 polkitguard/
-├── cmd/scan/          # Punto de entrada CLI
+├── cmd/scan/          # CLI entry point
 ├── internal/
-│   ├── config/       # Configuración
-│   ├── detector/     # Reglas de detección
-│   ├── models/      # Tipos de datos
-│   ├── parser/      # Parser de archivos
-│   ├── report/      # Salida (text, JSON, HTML, SARIF)
-│   ├── scanner/     # Escaneo de archivos
-│   ├── watcher/     # Modo observador
+│   ├── config/       # Configuration
+│   ├── detector/     # Detection rules
+│   ├── models/       # Data types
+│   ├── parser/       # File parser
+│   ├── report/       # Output (text, JSON, HTML, SARIF)
+│   ├── scanner/      # File scanner
+│   ├── watcher/      # Watch mode
 │   └── cis/          # CIS Benchmarks
-├── testdata/         # Ejemplos de prueba
-├── Makefile          # Comandos de build
+├── testdata/         # Test examples
+├── Makefile          # Build commands
 └── README.md
 ```
 
 ---
 
-## Para Desarrolladores
+## For Developers
 
 ```bash
-# Desarrollo
-make build           # Compilar
+# Development
+make build           # Build
 make test            # Tests
 make vet             # go vet
-make fmt            # Formatear código
+make fmt            # Format code
 
-# Instalación local
+# Local install
 make install        # go install
 ```
 
 ---
 
-## Documentación
+## Documentation
 
-- [SECURITY.md](SECURITY.md) - Política de seguridad
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Cómo contribuir
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Código de conducta
-- [CHANGELOG.md](CHANGELOG.md) - Historial de cambios
+- [SECURITY.md](SECURITY.md) - Security policy
+- [CONTRIBUTING.md](CONTRIBUTING.md) - How to contribute
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) - Code of conduct
+- [CHANGELOG.md](CHANGELOG.md) - Change history
 
 ---
 
 ## License
 
-MIT - Ver [LICENSE](LICENSE)
+MIT - See [LICENSE](LICENSE)
