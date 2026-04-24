@@ -16,7 +16,7 @@ func getTestDataDir(t *testing.T) string {
 	if testDir != "" {
 		return testDir
 	}
-	return "/home/vaca/github/PolkitGuard/testdata"
+	return "testdata"
 }
 
 func TestIntegrationFullScan(t *testing.T) {
