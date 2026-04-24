@@ -2,6 +2,28 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.9.0] - Production Ready Release
+
+### Added
+- 14 Detection Rules for Polkit security
+- Multiple output formats: text, JSON, HTML, SARIF
+- CLI flags: --path, --severity, --format, -q, -v, -y
+- False positive suppression (SuppressRule)
+- CIS Benchmarks checks
+- Watch mode for continuous monitoring
+- Config file support
+- Severity scoring system
+- GoReleaser configuration for releases
+- Docker support
+- Release GitHub Action
+
+### Professional Polish
+- Clean README in English
+- LICENSE, CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md
+- Makefile with build targets
+- .gitignore
+- CI/CD with GitHub Actions
+
 ## [0.8.0] - Phase 4 Complete
 
 ### Added

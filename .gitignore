@@ -6,6 +6,7 @@ bin/
 # Go
 *.test
 coverage.out
+vendor/
 
 # IDE
 .idea/
@@ -22,3 +23,6 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Release
+dist/

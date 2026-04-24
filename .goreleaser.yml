@@ -1,0 +1,50 @@
+# .goreleaser.yml for automated releases
+# Install: curl -sL https://git.io/goreleaser | sh
+
+project_name: polkitguard
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: polkitguard
+    dir: ./cmd/scan
+    binary: polkitguard
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format: tarball
+    format_overrides: []
+
+checksum:
+  name: checksums.txt
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^style:"
+      - "^chore:"
+
+release:
+  github:
+    owner: Ghostalex07
+    name: PolkitGuard
+  draft: false
+  name_template: "{{ .Tag }}"
+
+announce:
+  github:
+    enabled: true

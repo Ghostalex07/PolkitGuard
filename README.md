@@ -3,6 +3,7 @@
 [![CI Status](https://github.com/Ghostalex07/PolkitGuard/workflows/CI/badge.svg)](https://github.com/Ghostalex07/PolkitGuard/actions)
 [![Go Version](https://img.shields.io/go.mod/go-version/Ghostalex07/PolkitGuard)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Release](https://img.shields.io/github/v/release/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard/releases)
 
 **Security auditing tool for Linux Polkit policies** - Detects dangerous configurations that can lead to privilege escalation.
 
