@@ -82,35 +82,35 @@
 
 ---
 
-## Phase 3: Maturity
+## Phase 3: Maturity ✅
 
 ### CI/CD
 - [x] GitHub Actions workflow
 - [x] Auto-build on push
 - [x] Test runner in CI
-- [x] Release automation
-
-### Distribution
-- [x] Binary releases (Linux amd64, arm64)
-- [x] Package for AUR (Arch Linux)
-- [x] Package for DEB/RPM (Debian/RedHat)
 
 ### Documentation
 - [x] CONTRIBUTING.md
 - [x] CODE_OF_CONDUCT.md
-- [x] SECURITY.md (security contact)
-- [x] User guide / manual pages
-- [x] Examples of real vulnerable configurations
+- [x] SECURITY.md
 
 ### UX Improvements
 - [x] Interactive mode (auto-confirm with -y)
-- [x] Config file support (JSON/YAML)
 - [x] Multiple output formats (JSON, SARIF, HTML)
 - [x] Quiet mode (`-q`)
 
 ---
 
 ## Phase 4: Growth
+
+### Advanced Features
+- [x] Severity scoring system
+
+### Advanced Detection
+- [x] Severity scoring system
+
+### UX
+- [x] Config file support (JSON)
 
 ### Advanced Features
 - [ ] Daemon mode for continuous monitoring

@@ -44,15 +44,28 @@ func (s Severity) Color() string {
 type Finding struct {
 	Severity        Severity
 	File            string
-	Rule            string
+	RuleName        string
 	Message         string
 	Impact          string
 	Recommendation  string
+	Score         int
 }
 
 func (f Finding) String() string {
-	return fmt.Sprintf("[%s] %s\n  Rule: %s\n  Message: %s\n  Impact: %s\n  Recommendation: %s\n",
-		f.Severity.String(), f.File, f.Rule, f.Message, f.Impact, f.Recommendation)
+	return fmt.Sprintf("[%s] %s\n  Rule: %s\n  Message: %s\n  Impact: %s\n  Recommendation: %s\n  Score: %d\n",
+		f.Severity.String(), f.File, f.RuleName, f.Message, f.Impact, f.Recommendation, f.Score)
+}
+
+func (f Finding) CalculateScore() int {
+	baseScore := int(f.Severity) * 25
+	if f.Severity == SeverityCritical && f.Impact != "" {
+		baseScore += 20
+	}
+	if f.Severity == SeverityHigh && f.Impact != "" {
+		baseScore += 10
+	}
+	f.Score = baseScore
+	return baseScore
 }
 
 type PolkitRule struct {

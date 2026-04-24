@@ -2,6 +2,13 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [0.7.0] - Phase 4: Growth
+
+### Added
+- Severity scoring system (Score field on Findings)
+- Config file support (JSON format)
+- Phase 4: Growth tasks started
+
 ## [0.6.0] - Phase 3: Maturity
 
 ### Added
