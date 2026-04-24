@@ -26,6 +26,9 @@ var (
 	flagConfig   string
 	flagOutput   string
 	flagSummary  bool
+	flagVersion  bool
+	flagRule     string
+	flagShell    string
 	format      string
 )
 
@@ -34,12 +37,15 @@ func init() {
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
 	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON)")
 	flag.StringVar(&flagOutput, "output", "", "Output file path")
+	flag.StringVar(&flagRule, "rule", "", "Filter by rule ID (e.g., CRIT-001)")
 	flag.BoolVar(&flagSummary, "summary", false, "Show summary only (counts)")
+	flag.BoolVar(&flagVersion, "version", false, "Show version")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
 	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
 	flag.BoolVar(&flagConfirm, "y", false, "Skip confirmation prompts (auto-confirm)")
 	flag.StringVar(&format, "format", "text", "Output format: text, json, html, sarif, csv")
+	flag.StringVar(&flagShell, "shell", "", "Generate shell completions (bash, zsh, fish)")
 	flag.Usage = usage
 }
 
@@ -79,8 +85,69 @@ func loadConfig() (*config.Config, error) {
 	return config.Load(flagConfig)
 }
 
+func generateCompletion(shell string) {
+	switch shell {
+	case "bash":
+		fmt.Println("# Bash completion for polkitguard")
+		fmt.Println("_polkitguard() {")
+		fmt.Println("    local cur prev")
+		fmt.Println("    COMPREPLY=()")
+		fmt.Println("    cur=\"${COMP_WORDS[COMP_CWORD]}\"")
+		fmt.Println("    prev=\"${COMP_WORDS[COMP_CWORD-1]}\"")
+		fmt.Println("    opts=\"--path --severity --format --config --output --summary --version --rule --help -v -q -y\"")
+		fmt.Println("    COMPREPLY=( $(compgen -W \"${opts}\" -- ${cur}) )")
+		fmt.Println("    return 0")
+		fmt.Println("}")
+		fmt.Println("complete -F _polkitguard polkitguard")
+	case "zsh":
+		fmt.Println("# Zsh completion for polkitguard")
+		fmt.Println("_polkitguard() {")
+		fmt.Println("    local -a opts")
+		fmt.Println("    opts=('(--path)'{path}'[Custom path]'")
+		fmt.Println("           '(--severity)'{severity}'[Severity level]'")
+		fmt.Println("           '(--format)'{format}'[Output format]'")
+		fmt.Println("           '(--config)'{config}'[Config file]'")
+		fmt.Println("           '(--output)'{output}'[Output file]'")
+		fmt.Println("           '(--summary)'{summary}'[Summary only]'")
+		fmt.Println("           '(--version)'{version}'[Show version]'")
+		fmt.Println("           '(--rule)'{rule}'[Filter by rule ID]'")
+		fmt.Println("           '(-v)'{v}'[Verbose]'")
+		fmt.Println("           '(-q)'{q}'[Quiet]'")
+		fmt.Println("           '(-y)'{y}'[Auto-confirm]')")
+		fmt.Println("    _describe 'option' opts")
+		fmt.Println("}")
+		fmt.Println("_compdef _polkitguard polkitguard")
+	case "fish":
+		fmt.Println("# Fish completion for polkitguard")
+		fmt.Println("complete -c polkitguard -l path -d 'Custom path to scan'")
+		fmt.Println("complete -c polkitguard -l severity -d 'Severity level' -a 'low medium high critical'")
+		fmt.Println("complete -c polkitguard -l format -d 'Output format' -a 'text json html sarif csv'")
+		fmt.Println("complete -c polkitguard -l config -d 'Config file'")
+		fmt.Println("complete -c polkitguard -l output -d 'Output file'")
+		fmt.Println("complete -c polkitguard -l summary -d 'Show summary only'")
+		fmt.Println("complete -c polkitguard -l version -d 'Show version'")
+		fmt.Println("complete -c polkitguard -l rule -d 'Filter by rule ID'")
+		fmt.Println("complete -c polkitguard -s v -l verbose -d 'Verbose output'")
+		fmt.Println("complete -c polkitguard -s q -l quiet -d 'Quiet mode'")
+		fmt.Println("complete -c polkitguard -s y -d 'Auto-confirm'")
+	default:
+		fmt.Fprintf(os.Stderr, "Unsupported shell: %s (supported: bash, zsh, fish)\n", shell)
+		os.Exit(1)
+	}
+}
+
 func main() {
 	flag.Parse()
+
+	if flagVersion {
+		fmt.Printf("PolkitGuard version %s\n", version)
+		os.Exit(0)
+	}
+
+	if flagShell != "" {
+		generateCompletion(flagShell)
+		os.Exit(0)
+	}
 
 	cfg, err := loadConfig()
 	if err != nil {
@@ -152,6 +219,17 @@ func main() {
 
 	result := d.DetectAll(allRules)
 
+	if flagRule != "" {
+		d.SuppressRule(flagRule)
+		var filtered []models.Finding
+		for _, f := range result.Findings {
+			if f.RuleName != flagRule {
+				filtered = append(filtered, f)
+			}
+		}
+		result.Findings = filtered
+	}
+
 	severity := getSeverityLevel(flagSeverity)
 	if severity == 0 {
 		severity = getSeverityLevel(cfg.SeverityFilter)
@@ -178,16 +256,23 @@ func main() {
 		fmt.Printf("Report saved to: %s\n", flagOutput)
 	}
 
+	// Exit codes: 0=success, 1=low, 2=medium, 3=high, 4=critical, 5=error
 	if result.HasCritical() {
+		fmt.Fprintf(os.Stderr, "\n[CRITICAL] %d critical issues found\n", len(result.Findings))
 		os.Exit(4)
 	}
 	if result.HasHigh() {
+		fmt.Fprintf(os.Stderr, "\n[HIGH] %d high severity issues found\n", len(result.Findings))
 		os.Exit(3)
 	}
 	if result.HasMedium() {
+		fmt.Fprintf(os.Stderr, "\n[MEDIUM] %d medium severity issues found\n", len(result.Findings))
 		os.Exit(2)
 	}
 	if len(result.Findings) > 0 {
+		fmt.Fprintf(os.Stderr, "\n[LOW] %d low severity issues found\n", len(result.Findings))
 		os.Exit(1)
 	}
+	fmt.Println("\n✓ No security issues found")
+	os.Exit(0)
 }

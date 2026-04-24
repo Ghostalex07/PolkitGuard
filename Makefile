@@ -1,47 +1,85 @@
-.POLKITGUARD
+.PHONY: all build test build-local install clean lint vet check run run-test deps docker-build docker-run release
+
+BINARY_NAME=polkitguard
+VERSION=$(shell cat internal/config/config.go | grep 'Version.*=' | head -1 | awk -F'"' '{print $$2}')
+LDFLAGS=-ldflags "-X main.version=$(VERSION)"
+
+# Default target
+all: build test lint
 
 # Build
 build:
-	go build -o polkitguard ./cmd/scan
+	go build $(LDFLAGS) -o bin/$(BINARY_NAME) ./cmd/scan
+
+build-local:
+	go build $(LDFLAGS) -o $(BINARY_NAME) ./cmd/scan
 
 # Install
 install:
-	go install ./cmd/scan
+	go install $(LDFLAGS) ./cmd/scan
+
+# Run
+run:
+	go run $(LDFLAGS) ./cmd/scan --path testdata
+
+run-test:
+	go run $(LDFLAGS) ./cmd/scan --path testdata --severity high
+
+run-json:
+	go run $(LDFLAGS) ./cmd/scan --path testdata --format json --severity high
 
 # Test
 test:
-	go test -v ./...
+	go test -v -coverprofile=coverage.out ./...
 
-# Vet
+test-quick:
+	go test ./...
+
+test-detector:
+	go test -v -run TestDetect ./...
+
+test-bench:
+	go test -bench=. -benchtime=1s ./...
+
+# Lint
+lint: vet
+	@echo "Running linters..."
+
 vet:
 	go vet ./...
 
-# Format
-fmt:
-	gofmt -w .
-
-# Build all platforms
-build-all:
-	GOOS=linux GOARCH=amd64 go build -o bin/polkitguard-linux-amd64 ./cmd/scan
-	GOOS=linux GOARCH=arm64 go build -o bin/polkitguard-linux-arm64 ./cmd/scan
+check: lint test
 
 # Clean
 clean:
-	rm -f polkitguard
-	rm -rf bin/
+	rm -rf bin/ coverage.out
 
-# Run with test data
-run-test:
-	./polkitguard --path ./testdata
+# Docker
+docker-build:
+	docker build -t ghostalex07/polkitguard:latest .
 
-# Help
-help:
-	@echo "Available targets:"
-	@echo "  build       - Build the binary"
-	@echo "  install    - Install binary"
-	@echo "  test       - Run tests"
-	@echo "  vet        - Run go vet"
-	@echo "  fmt        - Format code"
-	@echo "  build-all  - Build for all platforms"
-	@echo "  clean      - Clean build artifacts"
-	@echo "  run-test   - Run with test data"
+docker-run:
+	docker run --rm -v /etc/polkit-1:/etc/polkit-1:ro ghostalex07/polkitguard:latest --path /etc/polkit-1
+
+docker-run-test:
+	docker run --rm -v $$(pwd)/testdata:/testdata:ro ghostalex07/polkitguard:latest --path /testdata
+
+# Release
+release:
+	goreleaser release --clean
+
+snapshot:
+	goreleaser build --snapshot --clean
+
+# Completion
+completion-bash:
+	go run ./cmd/scan completion bash > completions/polkitguard.bash
+	@echo "Bash completions saved to completions/polkitguard.bash"
+
+completion-zsh:
+	go run ./cmd/scan completion zsh > completions/polkitguard.zsh
+	@echo "Zsh completions saved to completions/polkitguard.zsh"
+
+deps:
+	go mod download
+	go mod tidy

@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PolkitGuard Config",
+  "description": "Configuration file for PolkitGuard security scanner",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Config version",
+      "pattern": "^[0-9]+\\.[0-9]+\.[0-9]+$"
+    },
+    "severity_filter": {
+      "type": "string",
+      "description": "Minimum severity level to report",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "output_format": {
+      "type": "string",
+      "description": "Output format",
+      "enum": ["text", "json", "html", "sarif", "csv"]
+    },
+    "custom_paths": {
+      "type": "array",
+      "description": "Custom paths to scan",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "exclude_rules": {
+      "type": "array",
+      "description": "Rule IDs to exclude (suppress)",
+      "items": {
+        "type": "string",
+        "pattern": "^(CRIT|HIGH|MED|LOW)-[0-9]{3}$"
+      },
+      "minItems": 1
+    },
+    "enable_rules": {
+      "type": "array",
+      "description": "Rule IDs to enable only",
+      "items": {
+        "type": "string",
+        "pattern": "^(CRIT|HIGH|MED|LOW)-[0-9]{3}$"
+      },
+      "minItems": 1
+    },
+    "ignore_paths": {
+      "type": "array",
+      "description": "File patterns to ignore",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    },
+    "verbose": {
+      "type": "boolean",
+      "description": "Enable verbose output"
+    },
+    "quiet": {
+      "type": "boolean",
+      "description": "Quiet mode - suppress banner"
+    }
+  },
+  "additionalProperties": false
+}
