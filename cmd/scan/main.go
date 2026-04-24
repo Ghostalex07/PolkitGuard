@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Ghostalex07/PolkitGuard/internal/config"
 	"github.com/Ghostalex07/PolkitGuard/internal/detector"
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 	"github.com/Ghostalex07/PolkitGuard/internal/parser"
@@ -21,12 +22,14 @@ var (
 	flagVerbose  bool
 	flagQuiet    bool
 	flagConfirm  bool
+	flagConfig   string
 	format      string
 )
 
 func init() {
 	flag.StringVar(&flagPath, "path", "", "Custom path to scan (default: system polkit directories)")
 	flag.StringVar(&flagSeverity, "severity", "low", "Minimum severity level (low, medium, high, critical)")
+	flag.StringVar(&flagConfig, "config", "", "Path to config file (JSON)")
 	flag.BoolVar(&flagHelp, "help", false, "Show help message")
 	flag.BoolVar(&flagVerbose, "v", false, "Enable verbose output")
 	flag.BoolVar(&flagQuiet, "q", false, "Quiet mode - suppress banner")
@@ -64,8 +67,21 @@ func getSeverityLevel(level string) models.Severity {
 	}
 }
 
+func loadConfig() (*config.Config, error) {
+	if flagConfig == "" {
+		return config.Default, nil
+	}
+	return config.Load(flagConfig)
+}
+
 func main() {
 	flag.Parse()
+
+	cfg, err := loadConfig()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
+		os.Exit(1)
+	}
 
 	if flagHelp || flag.NFlag() == 0 && flag.NArg() == 0 {
 		usage()
@@ -83,18 +99,18 @@ func main() {
 	}
 
 	var files []string
-	var err error
+	var scanErr error
 
 	if flagPath != "" {
 		s := scanner.NewScanner(nil)
-		files, err = s.ScanDirectory(flagPath)
+		files, scanErr = s.ScanDirectory(flagPath)
 	} else {
 		s := scanner.NewScanner(nil)
-		files, err = s.Scan()
+		files, scanErr = s.Scan()
 	}
 
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error scanning: %v\n", err)
+	if scanErr != nil {
+		fmt.Fprintf(os.Stderr, "Error scanning: %v\n", scanErr)
 		os.Exit(1)
 	}
 
@@ -110,8 +126,8 @@ func main() {
 	var allRules []models.PolkitRule
 
 	for _, file := range files {
-		rules, err := p.ParseFile(file)
-		if err != nil {
+		rules, parseErr := p.ParseFile(file)
+		if parseErr != nil {
 			continue
 		}
 		allRules = append(allRules, rules...)
@@ -122,9 +138,16 @@ func main() {
 	result := d.DetectAll(allRules)
 
 	severity := getSeverityLevel(flagSeverity)
+	if severity == 0 {
+		severity = getSeverityLevel(cfg.SeverityFilter)
+	}
+	outputFormat := format
+	if outputFormat == "text" && cfg.OutputFormat != "" {
+		outputFormat = cfg.OutputFormat
+	}
 	r := report.NewReporter(severity)
 
-	r.Output(result, format)
+	r.Output(result, outputFormat)
 
 	if result.HasCritical() {
 		os.Exit(4)

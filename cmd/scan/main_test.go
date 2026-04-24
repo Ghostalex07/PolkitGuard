@@ -194,6 +194,40 @@ func TestIntegrationExitCodes(t *testing.T) {
 	}
 }
 
+func BenchmarkParseAndDetect(b *testing.B) {
+	s := scanner.NewScanner(nil)
+	d := detector.NewDetector()
+	p := parser.NewParser()
+
+	testDataPath := getTestDataDirForBench()
+	files, _ := s.ScanDirectory(testDataPath)
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		var allRules []models.PolkitRule
+		for _, file := range files {
+			rules, _ := p.ParseFile(file)
+			allRules = append(allRules, rules...)
+		}
+		d.DetectAll(allRules)
+	}
+}
+
+func getTestDataDirForBench() string {
+	wd, _ := os.Getwd()
+	for {
+		testDataPath := filepath.Join(wd, "testdata")
+		if _, err := os.Stat(testDataPath); err == nil {
+			return testDataPath
+		}
+		parent := filepath.Dir(wd)
+		if parent == wd {
+			return "testdata"
+		}
+		wd = parent
+	}
+}
+
 func TestIntegrationMultipleOutputFormats(t *testing.T) {
 	s := scanner.NewScanner(nil)
 	d := detector.NewDetector()
