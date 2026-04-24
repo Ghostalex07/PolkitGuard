@@ -42,6 +42,7 @@ func (d *Detector) IsSuppressed(ruleID string) bool {
 
 func getDetectionRules() []DetectionRule {
 	return []DetectionRule{
+		// === CRITICAL ===
 		{
 			ID:             "CRIT-001",
 			Severity:       models.SeverityCritical,
@@ -87,6 +88,29 @@ func getDetectionRules() []DetectionRule {
 			},
 		},
 		{
+			ID:             "CRIT-005",
+			Severity:       models.SeverityCritical,
+			Description:    "Root user (euid=0) unrestricted access",
+			Impact:         "Root can perform any action without restrictions",
+			Recommendation: "Use proper authentication even for root",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Raw, "euid") &&
+					strings.Contains(rule.Raw, "== 0")
+			},
+		},
+		{
+			ID:             "CRIT-006",
+			Severity:       models.SeverityCritical,
+			Description:    "Authentication completely disabled",
+			Impact:         "No authentication required for this action",
+			Recommendation: "Enable authentication immediately",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Raw, "result_any=null") ||
+					strings.Contains(rule.Raw, "result_any=no")
+			},
+		},
+		// === HIGH ===
+		{
 			ID:             "HIGH-001",
 			Severity:       models.SeverityHigh,
 			Description:    "Permissions granted to unix-group:all",
@@ -104,9 +128,9 @@ func getDetectionRules() []DetectionRule {
 			Impact:         "Action matches more systems than intended",
 			Recommendation: "Use specific action patterns instead of wildcards",
 			Check: func(rule models.PolkitRule) bool {
-				return len(rule.Action) > 3 &&
+				return len(rule.Action) >= 5 &&
 					strings.Contains(rule.Action, "*") &&
-					!strings.Contains(rule.Action, "org.freedesktop.")
+					!strings.HasPrefix(rule.Action, "org.freedesktop.")
 			},
 		},
 		{
@@ -117,8 +141,7 @@ func getDetectionRules() []DetectionRule {
 			Recommendation: "Specify exact actions needed",
 			Check: func(rule models.PolkitRule) bool {
 				action := rule.Action
-				return (strings.Contains(action, "*") || action == "org.freedesktop.") &&
-					strings.Contains(action, "org.freedesktop.")
+				return strings.HasPrefix(action, "org.freedesktop.") && strings.Contains(action, "*")
 			},
 		},
 		{
@@ -135,13 +158,65 @@ func getDetectionRules() []DetectionRule {
 			},
 		},
 		{
+			ID:             "HIGH-005",
+			Severity:       models.SeverityHigh,
+			Description:    "Disk/Storage mounting permission",
+			Impact:         "Users can mount/unmount storage devices",
+			Recommendation: "Restrict to specific users or admin only",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "mount") ||
+					strings.Contains(rule.Action, "umount") ||
+					strings.Contains(rule.Action, "storage")
+			},
+		},
+		{
+			ID:             "HIGH-006",
+			Severity:       models.SeverityHigh,
+			Description:    "Systemd service management",
+			Impact:         "Users can start/stop system services",
+			Recommendation: "Restrict service management to admins",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "systemd") &&
+					(strings.Contains(rule.Action, "start") ||
+						strings.Contains(rule.Action, "stop") ||
+						strings.Contains(rule.Action, "restart"))
+			},
+		},
+		{
+			ID:             "HIGH-007",
+			Severity:       models.SeverityHigh,
+			Description:    "Power management access",
+			Impact:         "Users can shutdown/reboot system",
+			Recommendation: "Restrict power actions to admins only",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "reboot") ||
+					strings.Contains(rule.Action, "shutdown") ||
+					strings.Contains(rule.Action, "poweroff") ||
+					strings.Contains(rule.Action, "suspend")
+			},
+		},
+		{
+			ID:             "HIGH-008",
+			Severity:       models.SeverityHigh,
+			Description:    "KDE/Gnome session actions",
+			Impact:         "Users can affect desktop session",
+			Recommendation: "Restrict session modifications",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "session") ||
+					strings.Contains(rule.Action, " kde") ||
+					strings.Contains(rule.Action, "gnome")
+			},
+		},
+		// === MEDIUM ===
+		{
 			ID:             "MED-001",
 			Severity:       models.SeverityMedium,
 			Description:    "Ambiguous identity condition",
 			Impact:         "Unclear who is granted access",
 			Recommendation: "Use explicit identity checks",
 			Check: func(rule models.PolkitRule) bool {
-				return rule.Identity == "" && rule.Raw != ""
+				hasAuth := strings.Contains(rule.Raw, "auth_admin") || strings.Contains(rule.Raw, "auth_any")
+				return rule.Identity == "" && rule.Raw != "" && !hasAuth
 			},
 		},
 		{
@@ -152,7 +227,7 @@ func getDetectionRules() []DetectionRule {
 			Recommendation: "Consolidate or remove redundant rules",
 			Check: func(rule models.PolkitRule) bool {
 				return strings.Contains(rule.Raw, "result_any") &&
-					strings.Contains(rule.Raw, "result_any")
+					strings.Count(rule.Raw, "result_any") > 1
 			},
 		},
 		{
@@ -166,6 +241,17 @@ func getDetectionRules() []DetectionRule {
 					(rule.ResultActive == "auth_admin" && rule.ResultInactive == "yes")
 			},
 		},
+		{
+			ID:             "MED-004",
+			Severity:       models.SeverityMedium,
+			Description:    "Authentication via authentication agent",
+			Impact:         "May be bypassed via auth agent",
+			Recommendation: "Use direct authentication methods",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.ResultAny, "auth_admin_keep_always")
+			},
+		},
+		// === LOW ===
 		{
 			ID:             "LOW-001",
 			Severity:       models.SeverityLow,
@@ -188,18 +274,40 @@ func getDetectionRules() []DetectionRule {
 				return len(name) > 0 && len(name) < 10
 			},
 		},
-		{
-			ID:             "LOW-003",
-			Severity:       models.SeverityLow,
-			Description:    "Rule file without comments",
-			Impact:         "Missing documentation for maintenance",
-			Recommendation: "Add comments explaining rule purpose",
-			Check: func(rule models.PolkitRule) bool {
-				return rule.Raw != "" &&
-					!strings.Contains(rule.Raw, "#") &&
-					rule.Identity != ""
-			},
-		},
+		// {
+		// 	ID:             "LOW-003",
+		// 	Severity:       models.SeverityLow,
+		// 	Description:    "Rule file without comments",
+		// 	Impact:         "Missing documentation for maintenance",
+		// 	Recommendation: "Add comments explaining rule purpose",
+		// 	Check: func(rule models.PolkitRule) bool {
+		// 		return rule.Raw != "" &&
+		// 			!strings.Contains(rule.Raw, "#")
+		// 	},
+		// },
+		// {
+		// 	ID:             "LOW-004",
+		// 	Severity:       models.SeverityLow,
+		// 	Description:    "Very short action identifier",
+		// 	Impact:         "May conflict with future actions",
+		// 	Recommendation: "Use fully qualified action names",
+		// 	Check: func(rule models.PolkitRule) bool {
+		// 		return len(rule.Action) >= 6 &&
+		// 			!strings.Contains(rule.Action, "*")
+		// 	},
+		// },
+		// {
+		// 	ID:             "LOW-005",
+		// 	Severity:       models.SeverityLow,
+		// 	Description:    "Uses deprecated authentication method",
+		// 	Impact:         "Consider using stronger auth methods",
+		// 	Recommendation: "Update to current auth standards",
+		// 	Check: func(rule models.PolkitRule) bool {
+		// 		hasStandardAuth := rule.ResultAny == "auth_admin" || rule.ResultAny == "auth_admin_keep" ||
+		// 			rule.ResultAny == "auth_any" || rule.ResultAny == "auth_keep"
+		// 		return !hasStandardAuth && strings.Contains(rule.ResultAny, "auth")
+		// 	},
+		// },
 	}
 }
 

@@ -4,6 +4,9 @@
 [![Go Version](https://img.shields.io/go.mod/go-version/Ghostalex07/PolkitGuard)](https://go.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Release](https://img.shields.io/github/v/release/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard/releases)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Ghostalex07/PolkitGuard)](https://goreportcard.com/report/github.com/Ghostalex07/PolkitGuard)
+[![Code Size](https://img.shields.io/github/languages/code-size/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard)
+[![Last Commit](https://img.shields.io/github/last-commit/Ghostalex07/PolkitGuard)](https://github.com/Ghostalex07/PolkitGuard/commits/main)
 
 **Security auditing tool for Linux Polkit policies** - Detects dangerous configurations that can lead to privilege escalation.
 
@@ -95,22 +98,46 @@ Now you can run `polkitguard` from anywhere.
 
 ## What It Detects
 
-### Critical
-- Access without authentication
-- unix-user:* (any user)
+### Critical (6 rules)
+| ID | Description |
+|----|-------------|
+| CRIT-001 | Access without authentication |
+| CRIT-002 | unix-user:* (any user) |
+| CRIT-003 | Service escalation patterns |
+| CRIT-004 | Network dangerous actions |
+| CRIT-005 | Root user (euid=0) unrestricted |
+| CRIT-006 | Authentication completely disabled |
 
-### High
-- unix-group:all
-- Actions with wildcards (*)
-- org.freedesktop.* too broad
+### High (8 rules)
+| ID | Description |
+|----|-------------|
+| HIGH-001 | unix-group:all permissions |
+| HIGH-002 | Wildcard action patterns |
+| HIGH-003 | org.freedesktop.* broad matches |
+| HIGH-004 | Permissive session check |
+| HIGH-005 | Disk/Storage mounting |
+| HIGH-006 | Systemd service management |
+| HIGH-007 | Power management (reboot/shutdown) |
+| HIGH-008 | KDE/Gnome session actions |
 
-### Medium
-- Ambiguous identity
-- Redundant rules
+### Medium (4 rules)
+| ID | Description |
+|----|-------------|
+| MED-001 | Ambiguous identity |
+| MED-002 | Redundant rules |
+| MED-003 | Contradictory rules |
+| MED-004 | Deprecated authentication method |
 
-### Low
-- Inconsistent results
-- Files without comments
+### Low (5 rules)
+| ID | Description |
+|----|-------------|
+| LOW-001 | Inconsistent results |
+| LOW-002 | Poorly named files |
+| LOW-003 | No comments |
+| LOW-004 | Short action identifier |
+| LOW-005 | Deprecated auth method |
+
+**Total: 23 Detection Rules**
 
 ---
 
