@@ -682,6 +682,50 @@ func getDetectionRules() []DetectionRule {
 					rule.ResultAny == ""
 			},
 		},
+		{
+			ID:             "LOW-011",
+			Severity:       models.SeverityLow,
+			Description:    "Missing action in rule",
+			Impact:         "Rules may not apply",
+			Recommendation: "Define action explicitly",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Action == ""
+			},
+		},
+		{
+			ID:             "MED-011",
+			Severity:       models.SeverityMedium,
+			Description:    "ModemManager access",
+			Impact:         "Can control network modems",
+			Recommendation: "Restrict modem access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "modemmanager") ||
+					strings.Contains(rule.Action, "ModemManager")
+			},
+		},
+		{
+			ID:             "CRIT-013",
+			Severity:       models.SeverityCritical,
+			Description:    "PolicyKit local privilege escalation",
+			Impact:         "Full root access",
+			Recommendation: "Require strong auth",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "polkit") &&
+					strings.Contains(rule.Action, "local") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "HIGH-016",
+			Severity:       models.SeverityHigh,
+			Description:    "PackageKit access",
+			Impact:         "Can install packages",
+			Recommendation: "Restrict package installation",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "packagekit") ||
+					strings.Contains(rule.Action, "PackageKit")
+			},
+		},
 	}
 }
 

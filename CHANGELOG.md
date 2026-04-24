@@ -2,7 +2,21 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.12.0] - Current Release
+## [1.13.0] - Current Release
+
+### Added
+- JUnit XML output format
+- Diff mode for comparing scans (internal/diff package)
+- Syslog forwarding (internal/notifier/syslog.go)
+- Watcher package completed
+- 5 new detection rules (LOW-011, MED-011, CRIT-013, HIGH-016)
+- JSON Schema config validation with "junit" format
+
+### Changed
+- Version bump to 1.13.0
+- Total detection rules: 54
+
+## [1.12.0] - Previous Release
 
 ### Added
 - 10+ new detection rules (CRIT-011-012, HIGH-013-015, MED-009-010, LOW-009-010)

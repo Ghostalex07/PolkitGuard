@@ -11,7 +11,7 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 )
 
-var version = "1.12.0"
+var version = "1.13.0"
 
 type Reporter struct {
 	minSeverity models.Severity
@@ -85,9 +85,43 @@ func (r *Reporter) outputByFormat(findings []models.Finding, stats ReportStats, 
 		r.outputCSV(findings, stats)
 	case "pdf":
 		r.outputPDF(findings, stats)
+	case "junit":
+		r.outputJUnit(findings, stats)
 	default:
 		r.outputText(findings, stats)
 	}
+}
+
+func (r *Reporter) outputJUnit(findings []models.Finding, stats ReportStats) {
+	xml := `<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PolkitGuard" tests="` + fmt.Sprint(stats.Total) + `" failures="` + fmt.Sprint(stats.Critical+stats.High) + `" errors="0" skip="0" time="0.000">
+`
+	for _, f := range findings {
+		status := "passed"
+		if f.Severity >= models.SeverityMedium {
+			status = "failed"
+		}
+		xml += "\t<testcase name=\""
+		xml += escapeXML(f.RuleName) + "\" classname=\"PolkitGuard\">\n"
+		if status == "failed" {
+			xml += "\t\t<failure message=\""
+			xml += escapeXML(f.Message) + "\" type=\""
+			xml += f.Severity.String() + "\">"
+			xml += escapeXML(f.Impact) + "</failure>\n"
+		}
+		xml += "\t</testcase>\n"
+	}
+	xml += "</testsuite>"
+	fmt.Println(xml)
+}
+
+func escapeXML(s string) string {
+	s = strings.ReplaceAll(s, "&", "&amp;")
+	s = strings.ReplaceAll(s, "<", "&lt;")
+	s = strings.ReplaceAll(s, ">", "&gt;")
+	s = strings.ReplaceAll(s, "\"", "&quot;")
+	s = strings.ReplaceAll(s, "'", "&apos;")
+	return s
 }
 
 func (r *Reporter) outputPDF(findings []models.Finding, stats ReportStats) {
