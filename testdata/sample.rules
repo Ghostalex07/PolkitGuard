@@ -1,0 +1,4 @@
+[polkit_rule]
+identity=unix-user:admin
+action=org.freedesktop.system-logind
+result_any=auth_admin

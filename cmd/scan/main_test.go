@@ -16,6 +16,18 @@ func getTestDataDir(t *testing.T) string {
 	if testDir != "" {
 		return testDir
 	}
+	wd, _ := os.Getwd()
+	for {
+		testDataPath := filepath.Join(wd, "testdata")
+		if _, err := os.Stat(testDataPath); err == nil {
+			return testDataPath
+		}
+		parent := filepath.Dir(wd)
+		if parent == wd {
+			break
+		}
+		wd = parent
+	}
 	return "testdata"
 }
 
