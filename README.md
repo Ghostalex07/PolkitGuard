@@ -159,6 +159,139 @@ polkitguard/
 
 ---
 
+## Installation
+
+### From Source (All Linux)
+
+```bash
+git clone https://github.com/Ghostalex07/PolkitGuard.git
+cd PolkitGuard
+make build
+sudo install -m 755 polkitguard /usr/local/bin/
+```
+
+### Using Go Install
+
+```bash
+go install github.com/Ghostalex07/PolkitGuard@latest
+```
+
+### Arch Linux (AUR)
+
+```bash
+yay -S polkitguard
+```
+
+### Debian/Ubuntu
+
+```bash
+# Coming soon - DEB package
+```
+
+---
+
+## Usage Examples
+
+### Basic Scan
+
+```bash
+polkitguard scan
+```
+
+### Scan Custom Directory
+
+```bash
+polkitguard --path /etc/polkit/rules.d
+```
+
+### High Severity Only
+
+```bash
+polkitguard --severity high
+```
+
+### JSON Output for Automation
+
+```bash
+polkitguard --format json > results.json
+```
+
+### HTML Report
+
+```bash
+polkitguard --format html > report.html
+```
+
+### SARIF for SIEM/Tool Integration
+
+```bash
+polkitguard --format sarif
+```
+
+### Quiet Mode (CI/CD)
+
+```bash
+polkitguard -q && echo "Issues found" || echo "Clean"
+```
+
+### Check Exit Codes
+
+```bash
+polkitguard scan
+echo $?
+# 0 = Clean, 1 = Low, 2 = Medium, 3 = High, 4 = Critical
+```
+
+---
+
+## Use Cases
+
+### For System Administrators
+
+- Audit your Linux systems for polkit vulnerabilities
+- Part of hardening process
+- Regular security checks
+
+### For Blue Team
+
+- Detect privilege escalation vectors
+- Incident response documentation
+- Compliance audits
+
+### For Pentesters
+
+- Identify escalation opportunities
+- Document findings for reports
+
+### For Students
+
+- Learn about Linux security
+- Practice security auditing
+
+---
+
+## Who Should Use This
+
+- Linux system administrators
+- Security engineers / Blue Teams
+- Pentesters
+- DevOps engineers
+- Security students
+- Anyone hardening Linux systems
+
+---
+
+## Why Polkit?
+
+Polkit is the standard authorization framework in modern Linux. Misconfigurations can allow any user to:
+- Execute privileged commands without password
+- Access sensitive system functions
+- Escalate privileges to root
+
+PolkitGuard helps detect these issues before attackers.
+
+---
+
 ## License
 
 MIT License - See [LICENSE](LICENSE) for details.
