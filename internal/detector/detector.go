@@ -726,6 +726,91 @@ func getDetectionRules() []DetectionRule {
 					strings.Contains(rule.Action, "PackageKit")
 			},
 		},
+		{
+			ID:             "CRIT-014",
+			Severity:       models.SeverityCritical,
+			Description:    "AWS EC2 instance connect",
+			Impact:         "Can access EC2 instances",
+			Recommendation: "Restrict EC2 access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "aws") &&
+					strings.Contains(rule.Action, "ec2")
+			},
+		},
+		{
+			ID:             "CRIT-015",
+			Severity:       models.SeverityCritical,
+			Description:    "Kubernetes kubelet access",
+			Impact:         "Can control Kubernetes nodes",
+			Recommendation: "Restrict kubelet access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "kubelet") ||
+					strings.Contains(rule.Action, "kubernetes")
+			},
+		},
+		{
+			ID:             "HIGH-017",
+			Severity:       models.SeverityHigh,
+			Description:    "Docker container escalated privileges",
+			Impact:         "Can escalate container privileges",
+			Recommendation: "Restrict container privs",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "docker") &&
+					strings.Contains(rule.ResultAny, "yes")
+			},
+		},
+		{
+			ID:             "HIGH-018",
+			Severity:       models.SeverityHigh,
+			Description:    "Podman container access",
+			Impact:         "Can manage containers",
+			Recommendation: "Restrict podman access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "podman")
+			},
+		},
+		{
+			ID:             "MED-012",
+			Severity:       models.SeverityMedium,
+			Description:    "BlueZ Bluetooth access",
+			Impact:         "Can control Bluetooth",
+			Recommendation: "Restrict Bluetooth",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "bluez") ||
+					strings.Contains(rule.Action, "bluetooth")
+			},
+		},
+		{
+			ID:             "MED-013",
+			Severity:       models.SeverityMedium,
+			Description:    "NetworkManager WiFi control",
+			Impact:         "Can control WiFi",
+			Recommendation: "Restrict WiFi access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "Wifi") ||
+					strings.Contains(rule.Action, "wifi")
+			},
+		},
+		{
+			ID:             "LOW-012",
+			Severity:       models.SeverityLow,
+			Description:    "Undefined return statement",
+			Impact:         "Rule may not behave as expected",
+			Recommendation: "Add return statement",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Raw, "return")
+			},
+		},
+		{
+			ID:             "LOW-013",
+			Severity:       models.SeverityLow,
+			Description:    "Very permissive group match",
+			Impact:         "Matches many groups",
+			Recommendation: "Use specific groups",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Identity, "unix-group:*")
+			},
+		},
 	}
 }
 

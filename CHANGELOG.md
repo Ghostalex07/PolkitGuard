@@ -2,7 +2,22 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.13.0] - Current Release
+## [1.14.0] - Current Release
+
+### Added
+- 10 new detection rules (cloud/container specific: AWS EC2, Kubernetes, Docker, Podman)
+- Prometheus metrics (internal/metrics)
+- Better error handling (internal/errors)
+- Email notifications (internal/notifier/email)
+- CVE lookup (internal/cve)
+- OpenSCAP integration (internal/openscap)
+- Auto-remediation (internal/remediation)
+
+### Changed
+- Version bump to 1.14.0
+- Total detection rules: 64
+
+## [1.13.0] - Previous Release
 
 ### Added
 - JUnit XML output format
