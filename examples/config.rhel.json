@@ -1,0 +1,10 @@
+{
+  "version": "1.8.0",
+  "severity_filter": "high",
+  "output_format": "json",
+  "ignore_paths": [
+    "/usr/share/polkit-1/actions/org.freedesktop.systemtools*.policy"
+  ],
+  "verbose": false,
+  "quiet": false
+}

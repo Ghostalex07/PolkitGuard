@@ -2,6 +2,18 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [1.8.0] - Current Release
+
+### Added
+- Example configs for common distros (Debian, Ubuntu, RHEL, Fedora)
+- Version bump to 1.8.0
+
+### Improved
+- Reduced cyclomatic complexity by splitting getDetectionRules()
+
+### Changed
+- Detection rules now organized by severity level
+
 ## [1.0.0] - Production Ready Release
 
 ### Added

@@ -1,0 +1,11 @@
+{
+  "version": "1.8.0",
+  "severity_filter": "medium",
+  "output_format": "text",
+  "ignore_paths": [
+    "/usr/share/polkit-1/actions/*.pkla",
+    "/var/lib/polkit-1/localauthority/*.pkla"
+  ],
+  "verbose": false,
+  "quiet": false
+}
