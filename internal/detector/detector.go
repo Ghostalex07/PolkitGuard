@@ -15,12 +15,12 @@ type Detector struct {
 
 type DetectionRule struct {
 	ID             string
-	Severity        models.Severity
+	Severity       models.Severity
 	Description    string
 	Impact         string
 	Recommendation string
-	CVE           string
-	Check         func(rule models.PolkitRule) bool
+	CVE            string
+	Check          func(rule models.PolkitRule) bool
 }
 
 func NewDetector() *Detector {
@@ -52,10 +52,10 @@ func (d *Detector) AddCustomRule(cr config.CustomRule) {
 
 	pattern := cr.Pattern
 	d.rules = append(d.rules, DetectionRule{
-		ID:          cr.ID,
-		Severity:     sev,
-		Description: cr.Description,
-		Impact:     cr.Impact,
+		ID:             cr.ID,
+		Severity:       sev,
+		Description:    cr.Description,
+		Impact:         cr.Impact,
 		Recommendation: cr.Recommendation,
 		Check: func(rule models.PolkitRule) bool {
 			re := regexp.MustCompile(pattern)
@@ -306,7 +306,7 @@ func getDetectionRules() []DetectionRule {
 			Description:    "Poorly named rule file",
 			Impact:         "Difficult to identify rule purpose",
 			Recommendation: "Use descriptive file names",
-Check: func(rule models.PolkitRule) bool {
+			Check: func(rule models.PolkitRule) bool {
 				return rule.ResultActive != "" && rule.ResultInactive != "" &&
 					rule.ResultActive != rule.ResultInactive
 			},
@@ -417,13 +417,13 @@ func (d *Detector) Detect(rule models.PolkitRule) []models.Finding {
 		}
 		if detectionRule.Check(rule) {
 			finding := models.Finding{
-				Severity:        detectionRule.Severity,
+				Severity:       detectionRule.Severity,
 				File:           rule.File,
 				RuleName:       rule.RuleName,
 				Message:        detectionRule.Description,
 				Impact:         detectionRule.Impact,
 				Recommendation: detectionRule.Recommendation,
-				CVE:           detectionRule.CVE,
+				CVE:            detectionRule.CVE,
 			}
 			finding.CalculateScore()
 			findings = append(findings, finding)

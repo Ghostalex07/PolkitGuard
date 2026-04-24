@@ -24,7 +24,7 @@ func BenchmarkDetectCRIT002(b *testing.B) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity: "unix-user:*",
-		Action:  "org.test.action",
+		Action:   "org.test.action",
 	}
 
 	b.ResetTimer()
@@ -37,7 +37,7 @@ func BenchmarkDetectHIGH001(b *testing.B) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity: "unix-group:all",
-		Action:  "org.test.action",
+		Action:   "org.test.action",
 	}
 
 	b.ResetTimer()
@@ -52,7 +52,7 @@ func BenchmarkDetectAll100Rules(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		rules[i] = models.PolkitRule{
 			Identity:  "unix-user:admin",
-			Action:   "org.test.action",
+			Action:    "org.test.action",
 			ResultAny: "yes",
 		}
 	}

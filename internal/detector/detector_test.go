@@ -44,7 +44,7 @@ func TestDetectRule(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity:  "*",
-		Action:   "org.test",
+		Action:    "org.test",
 		ResultAny: "yes",
 	}
 	findings := d.Detect(rule)
@@ -79,7 +79,7 @@ func TestDetectNoAuthRequired(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity:  "unix-user:admin",
-		Action:   "org.test.action",
+		Action:    "org.test.action",
 		ResultAny: "auth_admin",
 	}
 	findings := d.Detect(rule)
@@ -110,9 +110,9 @@ func TestDetectSafeRule(t *testing.T) {
 	d := NewDetector()
 	rule := models.PolkitRule{
 		Identity:       "unix-user:admin",
-		Action:        "org.freedesktop.login1",
-		ResultAny:     "auth_admin",
-		ResultActive:  "auth_admin",
+		Action:         "org.freedesktop.login1",
+		ResultAny:      "auth_admin",
+		ResultActive:   "auth_admin",
 		ResultInactive: "auth_admin",
 	}
 	findings := d.Detect(rule)

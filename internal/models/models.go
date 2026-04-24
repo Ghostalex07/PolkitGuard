@@ -42,14 +42,14 @@ func (s Severity) Color() string {
 }
 
 type Finding struct {
-	Severity        Severity
-	File            string
-	RuleName        string
-	Message         string
-	Impact          string
-	Recommendation  string
-	Score         int
-	CVE           string
+	Severity       Severity
+	File           string
+	RuleName       string
+	Message        string
+	Impact         string
+	Recommendation string
+	Score          int
+	CVE            string
 }
 
 func (f Finding) String() string {
@@ -82,7 +82,7 @@ type PolkitRule struct {
 }
 
 type ScanResult struct {
-	Findings []Finding
+	Findings     []Finding
 	FilesScanned int
 	RulesFound   int
 }

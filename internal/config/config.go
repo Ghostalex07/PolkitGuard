@@ -8,25 +8,25 @@ import (
 )
 
 type Config struct {
-	Version        string        `json:"version"`
-	SeverityFilter  string        `json:"severity_filter,omitempty"`
-	OutputFormat  string        `json:"output_format,omitempty"`
-	CustomPaths  []string      `json:"custom_paths,omitempty"`
-	ExcludeRules []string      `json:"exclude_rules,omitempty"`
-	EnableRules []string      `json:"enable_rules,omitempty"`
-	IgnorePaths []string      `json:"ignore_paths,omitempty"`
-	CustomRules []CustomRule  `json:"custom_rules,omitempty"`
-	Verbose     bool          `json:"verbose,omitempty"`
-	Quiet       bool          `json:"quiet,omitempty"`
+	Version        string       `json:"version"`
+	SeverityFilter string       `json:"severity_filter,omitempty"`
+	OutputFormat   string       `json:"output_format,omitempty"`
+	CustomPaths    []string     `json:"custom_paths,omitempty"`
+	ExcludeRules   []string     `json:"exclude_rules,omitempty"`
+	EnableRules    []string     `json:"enable_rules,omitempty"`
+	IgnorePaths    []string     `json:"ignore_paths,omitempty"`
+	CustomRules    []CustomRule `json:"custom_rules,omitempty"`
+	Verbose        bool         `json:"verbose,omitempty"`
+	Quiet          bool         `json:"quiet,omitempty"`
 }
 
 type CustomRule struct {
-	ID          string `json:"id"`
-	Severity     string `json:"severity"`
-	Description string `json:"description"`
-	Pattern     string `json:"pattern"`
-	Message     string `json:"message"`
-	Impact      string `json:"impact,omitempty"`
+	ID             string `json:"id"`
+	Severity       string `json:"severity"`
+	Description    string `json:"description"`
+	Pattern        string `json:"pattern"`
+	Message        string `json:"message"`
+	Impact         string `json:"impact,omitempty"`
 	Recommendation string `json:"recommendation,omitempty"`
 }
 
@@ -102,9 +102,9 @@ func (c *Config) Save(path string) error {
 }
 
 var Default = &Config{
-	Version:       "1.6.0",
+	Version:        "1.6.0",
 	SeverityFilter: "low",
-	OutputFormat:  "text",
-	Verbose:      false,
-	Quiet:       false,
+	OutputFormat:   "text",
+	Verbose:        false,
+	Quiet:          false,
 }

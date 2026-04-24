@@ -59,7 +59,7 @@ func TestDefault(t *testing.T) {
 func TestConfigValidate(t *testing.T) {
 	cfg := &Config{
 		SeverityFilter: "high",
-		OutputFormat: "json",
+		OutputFormat:   "json",
 	}
 
 	err := cfg.Validate()

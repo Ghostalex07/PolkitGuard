@@ -9,10 +9,10 @@ import (
 )
 
 type Watcher struct {
-	paths   []string
+	paths    []string
 	interval time.Duration
 	onChange func(string)
-	running bool
+	running  bool
 }
 
 type ChangeCallback func(path string)
@@ -22,7 +22,7 @@ func NewWatcher(paths []string, interval time.Duration) *Watcher {
 		interval = 5 * time.Second
 	}
 	return &Watcher{
-		paths:     paths,
+		paths:    paths,
 		interval: interval,
 		running:  false,
 	}

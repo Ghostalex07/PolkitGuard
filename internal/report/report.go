@@ -18,12 +18,12 @@ type Reporter struct {
 
 type ReportStats struct {
 	FilesScanned int
-	RulesFound  int
-	Critical   int
-	High       int
-	Medium     int
-	Low        int
-	Total      int
+	RulesFound   int
+	Critical     int
+	High         int
+	Medium       int
+	Low          int
+	Total        int
 }
 
 func NewReporter(minSeverity models.Severity) *Reporter {
@@ -34,8 +34,8 @@ func (r *Reporter) CalculateStats(result models.ScanResult) ReportStats {
 	findings := result.Findings
 	stats := ReportStats{
 		FilesScanned: result.FilesScanned,
-		RulesFound:  result.RulesFound,
-		Total:     len(findings),
+		RulesFound:   result.RulesFound,
+		Total:        len(findings),
 	}
 	for _, f := range findings {
 		switch f.Severity {
@@ -112,17 +112,17 @@ func (r *Reporter) outputText(findings []models.Finding, stats ReportStats) {
 
 func (r *Reporter) outputJSON(findings []models.Finding, stats ReportStats) {
 	output := map[string]interface{}{
-		"scanner": "PolkitGuard",
-		"version": version,
+		"scanner":  "PolkitGuard",
+		"version":  version,
 		"findings": findings,
 		"stats": map[string]int{
 			"files_scanned": stats.FilesScanned,
-			"rules_found":  stats.RulesFound,
-			"total":      stats.Total,
-			"critical":   stats.Critical,
-			"high":       stats.High,
-			"medium":    stats.Medium,
-			"low":       stats.Low,
+			"rules_found":   stats.RulesFound,
+			"total":         stats.Total,
+			"critical":      stats.Critical,
+			"high":          stats.High,
+			"medium":        stats.Medium,
+			"low":           stats.Low,
 		},
 	}
 
@@ -195,8 +195,8 @@ func (r *Reporter) outputSARIF(findings []models.Finding, stats ReportStats) {
 		if !ruleMap[ruleID] {
 			rules = append(rules, map[string]interface{}{
 				"id":               ruleID,
-				"name":              f.Message,
-				"shortDescription":  map[string]string{"text": f.Message},
+				"name":             f.Message,
+				"shortDescription": map[string]string{"text": f.Message},
 				"helpUri":          "https://github.com/Ghostalex07/PolkitGuard",
 				"defaultConfiguration": map[string]interface{}{
 					"level": getSARIFLevel(f.Severity),
@@ -206,9 +206,9 @@ func (r *Reporter) outputSARIF(findings []models.Finding, stats ReportStats) {
 		}
 
 		results = append(results, map[string]interface{}{
-			"ruleId":   ruleID,
-			"level":    getSARIFLevel(f.Severity),
-			"message":  map[string]string{"text": f.Message},
+			"ruleId":  ruleID,
+			"level":   getSARIFLevel(f.Severity),
+			"message": map[string]string{"text": f.Message},
 			"locations": []map[string]interface{}{
 				{
 					"physicalLocation": map[string]interface{}{
@@ -228,10 +228,10 @@ func (r *Reporter) outputSARIF(findings []models.Finding, stats ReportStats) {
 			{
 				"tool": map[string]interface{}{
 					"driver": map[string]interface{}{
-						"name":         "PolkitGuard",
-						"version":      version,
+						"name":           "PolkitGuard",
+						"version":        version,
 						"informationUri": "https://github.com/Ghostalex07/PolkitGuard",
-						"rules":       rules,
+						"rules":          rules,
 					},
 				},
 				"results": results,

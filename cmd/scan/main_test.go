@@ -161,20 +161,20 @@ func TestIntegrationExitCodes(t *testing.T) {
 		expected bool
 	}{
 		{
-			name: "Critical should exit for critical min",
-			finding: models.Finding{Severity: models.SeverityCritical},
+			name:     "Critical should exit for critical min",
+			finding:  models.Finding{Severity: models.SeverityCritical},
 			minSev:   models.SeverityCritical,
 			expected: true,
 		},
 		{
-			name: "High should not exit for critical min",
-			finding: models.Finding{Severity: models.SeverityHigh},
+			name:     "High should not exit for critical min",
+			finding:  models.Finding{Severity: models.SeverityHigh},
 			minSev:   models.SeverityCritical,
 			expected: false,
 		},
 		{
-			name: "Low should exit for low min",
-			finding: models.Finding{Severity: models.SeverityLow},
+			name:     "Low should exit for low min",
+			finding:  models.Finding{Severity: models.SeverityLow},
 			minSev:   models.SeverityLow,
 			expected: true,
 		},

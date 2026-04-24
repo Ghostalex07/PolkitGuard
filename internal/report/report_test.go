@@ -9,7 +9,7 @@ import (
 func TestCalculateStats(t *testing.T) {
 	result := models.ScanResult{
 		FilesScanned: 5,
-		RulesFound:  20,
+		RulesFound:   20,
 		Findings: []models.Finding{
 			{Severity: models.SeverityCritical},
 			{Severity: models.SeverityCritical},
@@ -49,8 +49,8 @@ func TestCalculateStats(t *testing.T) {
 func TestOutputNoFindings(t *testing.T) {
 	result := models.ScanResult{
 		FilesScanned: 0,
-		RulesFound:  0,
-		Findings:   []models.Finding{},
+		RulesFound:   0,
+		Findings:     []models.Finding{},
 	}
 
 	r := NewReporter(models.SeverityLow)

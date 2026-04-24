@@ -18,21 +18,21 @@ import (
 const version = "1.7.0"
 
 var (
-	flagPath       string
-	flagSeverity   string
-	flagHelp      bool
-	flagVerbose   bool
-	flagQuiet     bool
-	flagConfirm   bool
-	flagConfig    string
-	flagOutput    string
-	flagSummary   bool
-	flagVersion   bool
-	flagRule      string
-	flagShell     string
-	flagNoColor   bool
+	flagPath        string
+	flagSeverity    string
+	flagHelp        bool
+	flagVerbose     bool
+	flagQuiet       bool
+	flagConfirm     bool
+	flagConfig      string
+	flagOutput      string
+	flagSummary     bool
+	flagVersion     bool
+	flagRule        string
+	flagShell       string
+	flagNoColor     bool
 	flagCheckUpdate bool
-	format       string
+	format          string
 )
 
 func init() {
@@ -92,11 +92,11 @@ func loadConfig() (*config.Config, error) {
 	if flagConfig == "-" {
 		return config.LoadReader(os.Stdin)
 	}
-	
+
 	if flagConfig != "" {
 		return config.Load(flagConfig)
 	}
-	
+
 	// Try config auto-discovery
 	paths := []string{
 		".polkitguard.json",
@@ -105,7 +105,7 @@ func loadConfig() (*config.Config, error) {
 		os.ExpandEnv("$HOME/.config/polkitguard.json"),
 		"/etc/polkitguard.json",
 	}
-	
+
 	for _, p := range paths {
 		if _, err := os.Stat(p); err == nil {
 			if cfg, err := config.Load(p); err == nil {
@@ -116,7 +116,7 @@ func loadConfig() (*config.Config, error) {
 			}
 		}
 	}
-	
+
 	return config.Default, nil
 }
 
@@ -220,7 +220,7 @@ func main() {
 	var scanErr error
 
 	paths := strings.Split(flagPath, ",")
-	
+
 	if flagPath != "" {
 		s := scanner.NewScanner(nil)
 		for _, p := range paths {
