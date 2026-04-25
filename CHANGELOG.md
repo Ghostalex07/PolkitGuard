@@ -36,12 +36,33 @@ All notable changes to PolkitGuard will be documented in this file.
 
 ### Cross-Language Integrations
 - Python package (integrations/python/)
+  - Async support with ThreadPoolExecutor
+  - Django middleware and cache integration
+  - Flask extension with routes setup
+  - Progress callbacks and scan hooks
 - JavaScript/TypeScript npm package (integrations/node/)
+  - Express middleware and router
+  - React hooks (usePolkitGuard)
+  - React components (PolkitBadge, PolkitStatusIndicator)
+  - ESM support
 - Rust crate (integrations/rust/)
+  - Async/await with tokio
+  - WASM-ready structs
 - Java Maven package (integrations/java/)
+  - AsyncPolkitGuard with CompletableFuture
+  - Spring Boot integration
+  - JUnit 5 extension
 - Ruby gem (integrations/ruby/)
+  - Rails integration (Railtie)
+  - RSpec matchers
+  - Concurrent scan with threads
 - PHP package (integrations/php/)
+  - Laravel service provider
+  - Symfony bundle ready
 - Shell scripts (integrations/shell/)
+- Elixir package (integrations/elixir/)
+- Haskell package (integrations/haskell/)
+- Go client (integrations/go/)
 
 ### Changed
 - Version bump to 1.18.0
