@@ -8,6 +8,23 @@ import (
 	"testing"
 )
 
+func getProjectRoot(t *testing.T) string {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(wd, "go.mod")); err == nil {
+			return wd
+		}
+		parent := filepath.Dir(wd)
+		if parent == wd {
+			t.Fatalf("Could not find project root")
+		}
+		wd = parent
+	}
+}
+
 func TestIntegrationMultiplePaths(t *testing.T) {
 	tmpDir1 := t.TempDir()
 	tmpDir2 := t.TempDir()
@@ -20,7 +37,7 @@ result_any=auth_admin
 `), 0644)
 
 	cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir1+","+tmpDir2)
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	output, _ := cmd.CombinedOutput()
 
@@ -44,10 +61,11 @@ result_any=yes
 		{"low"},
 	}
 
+	projectRoot := getProjectRoot(t)
 	for _, tt := range tests {
 		t.Run(tt.severity, func(t *testing.T) {
 			cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir, "--severity", tt.severity)
-			cmd.Dir = "/home/vaca/github/PolkitGuard"
+			cmd.Dir = projectRoot
 
 			cmd.Run()
 		})
@@ -61,11 +79,12 @@ result_any=auth_admin
 `), 0644)
 
 	formats := []string{"text", "json", "csv"}
+	projectRoot := getProjectRoot(t)
 
 	for _, format := range formats {
 		t.Run(format, func(t *testing.T) {
 			cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir, "--format", format)
-			cmd.Dir = "/home/vaca/github/PolkitGuard"
+			cmd.Dir = projectRoot
 
 			cmd.Run()
 		})
@@ -74,7 +93,7 @@ result_any=auth_admin
 
 func TestIntegrationHelp(t *testing.T) {
 	cmd := exec.Command("go", "run", "./cmd/scan", "--help")
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -88,7 +107,7 @@ func TestIntegrationHelp(t *testing.T) {
 
 func TestIntegrationVersion(t *testing.T) {
 	cmd := exec.Command("go", "run", "./cmd/scan", "--version")
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -107,7 +126,7 @@ result_any=auth_admin
 `), 0644)
 
 	cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir, "--no-color")
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	cmd.Run()
 }
@@ -119,7 +138,7 @@ result_any=auth_admin
 `), 0644)
 
 	cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir, "-v")
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	cmd.Run()
 }
@@ -131,7 +150,7 @@ result_any=auth_admin
 `), 0644)
 
 	cmd := exec.Command("go", "run", "./cmd/scan", "--path", tmpDir, "-q")
-	cmd.Dir = "/home/vaca/github/PolkitGuard"
+	cmd.Dir = getProjectRoot(t)
 
 	cmd.Run()
 }
