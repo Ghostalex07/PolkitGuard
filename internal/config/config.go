@@ -102,7 +102,7 @@ func (c *Config) Save(path string) error {
 }
 
 var Default = &Config{
-	Version:        "1.15.0",
+	Version:        "1.16.0",
 	SeverityFilter: "low",
 	OutputFormat:   "text",
 	Verbose:        false,

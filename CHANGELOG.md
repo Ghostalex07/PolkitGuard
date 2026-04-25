@@ -2,7 +2,20 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.15.0] - Current Release
+## [1.16.0] - Current Release
+
+### Added
+- 15 new detection rules (K8s, OpenShift, Cloud, runc, etc.)
+- Puppet module (examples/puppet/)
+- Salt states (examples/salt/)
+- Fuzzing tests (internal/parser/fuzz_test.go)
+- GitHub Actions workflow template (examples/.github/workflows/)
+
+### Changed
+- Version bump to 1.16.0
+- Total detection rules: 89
+
+## [1.15.0] - Previous Release
 
 ### Added
 - 10 new detection rules (cloud/container: GCP, Azure, containerd, CRI-O, AWS ECS)

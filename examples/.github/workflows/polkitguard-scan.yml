@@ -1,0 +1,69 @@
+name: PolkitGuard Security Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run PolkitGuard scan
+        run: |
+          go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
+          polkitguard scan \
+            --path /etc/polkit-1,/usr/share/polkit-1 \
+            --severity medium \
+            --format sarif \
+            -o polkit-results.sarif
+
+      - name: Upload results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          category: polkit
+          sarif_file: polkit-results.sarif
+
+      - name: Send to webhook
+        if: success() || failure()
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          curl -s -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"status":"${{ job.status }}","repo":"${{ github.repository }}","run_id":"${{ github.run_id }}"}'
+
+  audit-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install PolkitGuard
+        run: go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
+
+      - name: Generate audit report
+        run: |
+          polkitguard scan \
+            --path /etc/polkit-1 \
+            --severity low \
+            --format html \
+            --output report.html
+
+      - name: Archive report
+        uses: actions/upload-artifact@v4
+        with:
+          name: polkitguard-report
+          path: report.html
+          retention-days: 30
+
+  critical-alert:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    if: failure()
+    steps:
+      - name: Send alert
+        run: |
+          echo "Critical security issues found!"

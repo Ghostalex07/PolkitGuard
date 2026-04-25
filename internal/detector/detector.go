@@ -909,6 +909,133 @@ func getDetectionRules() []DetectionRule {
 				return rule.Action != "" && rule.Identity == "" && rule.ResultAny == ""
 			},
 		},
+		{
+			ID:             "CRIT-018",
+			Severity:       models.SeverityCritical,
+			Description:    "OpenShift privileged pod",
+			Impact:         "Can create privileged pods in OpenShift",
+			Recommendation: "Restrict privileged pods",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "openshift") &&
+					strings.Contains(rule.Action, "privileged")
+			},
+		},
+		{
+			ID:             "CRIT-019",
+			Severity:       models.SeverityCritical,
+			Description:    "Kubernetes hostPath mount",
+			Impact:         "Can mount host filesystem",
+			Recommendation: "Restrict hostPath mounts",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "hostpath") ||
+					strings.Contains(rule.Action, "hostPath")
+			},
+		},
+		{
+			ID:             "CRIT-020",
+			Severity:       models.SeverityCritical,
+			Description:    "AWS Lambda function access",
+			Impact:         "Can manage Lambda functions",
+			Recommendation: "Restrict Lambda access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "lambda") &&
+					strings.Contains(rule.Action, "aws")
+			},
+		},
+		{
+			ID:             "HIGH-022",
+			Severity:       models.SeverityHigh,
+			Description:    "runc container access",
+			Impact:         "Can control container runc",
+			Recommendation: "Restrict runc",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "runc")
+			},
+		},
+		{
+			ID:             "HIGH-023",
+			Severity:       models.SeverityHigh,
+			Description:    "systemd-coredump",
+			Impact:         "Can access coredumps",
+			Recommendation: "Restrict coredump access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "coredump")
+			},
+		},
+		{
+			ID:             "HIGH-024",
+			Severity:       models.SeverityHigh,
+			Description:    "GCP Cloud Functions",
+			Impact:         "Can manage Cloud Functions",
+			Recommendation: "Restrict Cloud Functions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "cloudfunctions") &&
+					strings.Contains(rule.Action, "gcp")
+			},
+		},
+		{
+			ID:             "MED-016",
+			Severity:       models.SeverityMedium,
+			Description:    "NetworkManager dispatcher",
+			Impact:         "Can run network scripts",
+			Recommendation: "Restrict NM dispatcher",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "NetworkManager") &&
+					strings.Contains(rule.Action, "dispatcher")
+			},
+		},
+		{
+			ID:             "MED-017",
+			Severity:       models.SeverityMedium,
+			Description:    "AccountsService access",
+			Impact:         "Can manage user accounts",
+			Recommendation: "Restrict accounts",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "accounts-daemon")
+			},
+		},
+		{
+			ID:             "MED-018",
+			Severity:       models.SeverityMedium,
+			Description:    "udisks2 full access",
+			Impact:         "Can mount any disk",
+			Recommendation: "Restrict udisks",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "udisks2") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "LOW-016",
+			Severity:       models.SeverityLow,
+			Description:    "Unused polkit action",
+			Impact:         "Action never called",
+			Recommendation: "Remove unused actions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "/internal/")
+			},
+		},
+		{
+			ID:             "LOW-017",
+			Severity:       models.SeverityLow,
+			Description:    "Debug polkit action",
+			Impact:         "Debug action exposed",
+			Recommendation: "Remove debug actions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "debug") ||
+					strings.Contains(rule.Action, ".debug")
+			},
+		},
+		{
+			ID:             "LOW-018",
+			Severity:       models.SeverityLow,
+			Description:    "Empty identity match",
+			Impact:         "Matches no one",
+			Recommendation: "Define explicit identity",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Identity == "unix-user:"
+			},
+		},
 	}
 }
 
