@@ -1036,6 +1036,177 @@ func getDetectionRules() []DetectionRule {
 				return rule.Identity == "unix-user:"
 			},
 		},
+		{
+			ID:             "CRIT-021",
+			Severity:       models.SeverityCritical,
+			Description:    "Azure Functions access",
+			Impact:         "Can manage Azure Functions",
+			Recommendation: "Restrict Azure Functions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "azure") &&
+					strings.Contains(rule.Action, "function")
+			},
+		},
+		{
+			ID:             "CRIT-022",
+			Severity:       models.SeverityCritical,
+			Description:    "GCP Cloud Run access",
+			Impact:         "Can manage Cloud Run services",
+			Recommendation: "Restrict Cloud Run",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "cloudrun") ||
+					strings.Contains(rule.Action, "cloud.run")
+			},
+		},
+		{
+			ID:             "CRIT-023",
+			Severity:       models.SeverityCritical,
+			Description:    "Kubernetes anyuid SCC",
+			Impact:         "Can run as any user in K8s",
+			Recommendation: "Restrict SCC",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "scc") &&
+					strings.Contains(rule.Action, "anyuid")
+			},
+		},
+		{
+			ID:             "HIGH-025",
+			Severity:       models.SeverityHigh,
+			Description:    "KDE Plasma access",
+			Impact:         "Can control KDE session",
+			Recommendation: "Restrict Plasma",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "plasma") ||
+					strings.Contains(rule.Action, "kded")
+			},
+		},
+		{
+			ID:             "HIGH-026",
+			Severity:       models.SeverityHigh,
+			Description:    "GNOME Shell extensions",
+			Impact:         "Can modify GNOME extensions",
+			Recommendation: "Restrict GNOME",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "gnome") &&
+					strings.Contains(rule.Action, "extension")
+			},
+		},
+		{
+			ID:             "HIGH-027",
+			Severity:       models.SeverityHigh,
+			Description:    "WireGuard access",
+			Impact:         "Can configure WireGuard",
+			Recommendation: "Restrict VPN",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "wireguard")
+			},
+		},
+		{
+			ID:             "HIGH-028",
+			Severity:       models.SeverityHigh,
+			Description:    "OpenVPN management",
+			Impact:         "Can manage VPN connections",
+			Recommendation: "Restrict OpenVPN",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "openvpn")
+			},
+		},
+		{
+			ID:             "HIGH-029",
+			Severity:       models.SeverityHigh,
+			Description:    "NVIDIA driver access",
+			Impact:         "Can load NVIDIA drivers",
+			Recommendation: "Restrict driver loading",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "nvidia") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "MED-019",
+			Severity:       models.SeverityMedium,
+			Description:    "Bluetooth access",
+			Impact:         "Can access Bluetooth",
+			Recommendation: "Restrict Bluetooth",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "bluetooth") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "MED-020",
+			Severity:       models.SeverityMedium,
+			Description:    "PulseAudio control",
+			Impact:         "Can control audio",
+			Recommendation: "Restrict audio",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "pulseaudio")
+			},
+		},
+		{
+			ID:             "MED-021",
+			Severity:       models.SeverityMedium,
+			Description:    "Saned scanner access",
+			Impact:         "Can access scanner",
+			Recommendation: "Restrict scanner",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "saned")
+			},
+		},
+		{
+			ID:             "MED-022",
+			Severity:       models.SeverityMedium,
+			Description:    "Colord color management",
+			Impact:         "Can manage color profiles",
+			Recommendation: "Restrict colord",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "colord")
+			},
+		},
+		{
+			ID:             "LOW-019",
+			Severity:       models.SeverityLow,
+			Description:    "Test action",
+			Impact:         "Test action exposed",
+			Recommendation: "Remove test actions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "test") ||
+					strings.Contains(rule.Action, ".test")
+			},
+		},
+		{
+			ID:             "LOW-020",
+			Severity:       models.SeverityLow,
+			Description:    "Example/example action",
+			Impact:         "Example action exposed",
+			Recommendation: "Remove example actions",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "example") ||
+					strings.HasPrefix(rule.Action, "example.")
+			},
+		},
+		{
+			ID:             "LOW-021",
+			Severity:       models.SeverityLow,
+			Description:    "Admin group without auth",
+			Impact:         "Admin group without auth",
+			Recommendation: "Require auth for admin",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Identity, "unix-group:admin") &&
+					rule.ResultAny != "auth_admin"
+			},
+		},
+		{
+			ID:             "LOW-022",
+			Severity:       models.SeverityLow,
+			Description:    "Wildcard in action without result",
+			Impact:         "Wildcard + yes is dangerous",
+			Recommendation: "Use explicit auth",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "*") &&
+					rule.ResultAny == "yes"
+			},
+		},
 	}
 }
 

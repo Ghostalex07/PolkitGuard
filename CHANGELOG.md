@@ -2,7 +2,21 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.16.0] - Current Release
+## [1.17.0] - Ultimate Release
+
+### Added
+- 22 new detection rules (Azure Functions, Cloud Run, K8s SCC, KDE, GNOME, VPN drivers, etc.)
+- Chef cookbook (examples/chef/)
+- kubectl plugin (examples/kubectl-plugin/)
+- Custom templates (examples/templates/)
+- Compliance audit reports (internal/audit/)
+- Excel/xlsx format support ready
+
+### Changed
+- Version bump to 1.17.0
+- Total detection rules: 109
+
+## [1.16.0] - Previous Release
 
 ### Added
 - 15 new detection rules (K8s, OpenShift, Cloud, runc, etc.)
