@@ -61,7 +61,7 @@ func TakeSnapshot(rules []models.PolkitRule) PolicySnapshot {
 	return snapshot
 }
 
-func (s *PolicySnapshot) Save(path string) error {
+func (s PolicySnapshot) Save(path string) error {
 	data, err := json.MarshalIndent(s, "", "  ")
 	if err != nil {
 		return err

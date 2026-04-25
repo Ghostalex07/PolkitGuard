@@ -30,6 +30,9 @@ All notable changes to PolkitGuard will be documented in this file.
 - Trend analysis (internal/trend/analysis.go)
 - Config generator (internal/generator/generator.go)
 - Finding model expanded with RuleID, Title, Description, Rule pointer
+- HTTP API server (internal/api/server.go)
+- Multi-command CLI (cmd/polkitguard/main.go)
+- Tests for all new packages
 
 ### Changed
 - Version bump to 1.18.0
