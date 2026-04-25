@@ -11,7 +11,7 @@ import (
 	"github.com/Ghostalex07/PolkitGuard/internal/models"
 )
 
-var version = "1.17.0"
+var version = "1.18.0"
 
 type Reporter struct {
 	minSeverity models.Severity

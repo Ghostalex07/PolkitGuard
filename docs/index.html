@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolkitGuard - Linux Security Scanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f1f5f9;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+        .badges {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .feature {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .feature:hover { transform: translateY(-5px); }
+        .feature i {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .feature h3 { margin-bottom: 0.5rem; }
+        .code-block {
+            background: var(--dark);
+            color: #a5b4fc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: var(--secondary); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .stat {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        .stat-value { font-size: 2rem; font-weight: bold; color: var(--primary); }
+        .stat-label { color: #64748b; font-size: 0.875rem; }
+        .footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        .install-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .step {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><i class="fas fa-shield-halved"></i> PolkitGuard</h1>
+        <p>Security scanner for Linux Polkit policies</p>
+        <div class="badges">
+            <span class="badge"><i class="fas fa-code"></i> Go</span>
+            <span class="badge"><i class="fas fa-shield"></i> 109 Rules</span>
+            <span class="badge"><i class="fas fa-docker"></i> Docker</span>
+            <span class="badge"><i class="fas fa-linux"></i> Cross-platform</span>
+        </div>
+    </header>
+
+    <div class="container">
+        <section>
+            <h2 style="text-align:center; margin-bottom:2rem;">Why PolkitGuard?</h2>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">109</div>
+                    <div class="stat-label">Detection Rules</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">8+</div>
+                    <div class="stat-label">Output Formats</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">15+</div>
+                    <div class="stat-label">Integrations</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">90%</div>
+                    <div class="stat-label">Test Coverage</div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="text-align:center; margin:3rem 0 2rem;">Features</h2>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <h3>Security Detection</h3>
+                    <p>109 detection rules for identifying dangerous Polkit configurations</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-pie"></i>
+                    <h3>Multiple Formats</h3>
+                    <p>Output in text, JSON, HTML, SARIF, CSV, PDF, JUnit, and more</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-robot"></i>
+                    <h3>Automation Ready</h3>
+                    <p>Ansible, Puppet, Chef, Salt, and Kubernetes integrations</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bell"></i>
+                    <h3>Notifications</h3>
+                    <p>Webhook, Email, and Syslog alerting</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-repeat"></i>
+                    <h3>CI/CD Integration</h3>
+                    <p>GitHub Actions, GitLab CI, Jenkins</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-terminal"></i>
+                    <h3>TUI Interface</h3>
+                    <p>Interactive terminal user interface</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="text-align:center; margin:3rem 0 2rem;">Quick Install</h2>
+            <div class="install-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Download</h3>
+                    <p>Binary releases for Linux, macOS, Windows</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Configure</h3>
+                    <p>Customize paths and severity filters</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Scan</h3>
+                    <p>Run security scans immediately</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="text-align:center; margin:3rem 0 2rem;">Installation</h2>
+            <div class="code-block">
+<pre><code># From source
+go install github.com/Ghostalex07/PolkitGuard/cmd/scan@latest
+
+# Docker
+docker run ghostalex07/polkitguard:latest --path /etc/polkit-1
+
+# Binary
+curl -sL https://github.com/Ghostalex07/PolkitGuard/releases/latest/polkitguard-linux-amd64 -o /usr/local/bin/polkitguard
+chmod +x /usr/local/bin/polkitguard</code></pre>
+            </div>
+        </section>
+
+        <section>
+            <h2 style="text-align:center; margin:3rem 0 2rem;">Usage Examples</h2>
+            <div class="code-block">
+<pre><code># Basic scan
+polkitguard scan --path /etc/polkit-1
+
+# Scan with severity filter
+polkitguard scan --severity high --format json
+
+# Generate HTML report
+polkitguard scan --path /etc/polkit-1 --format html --output report.html
+
+# Watch mode
+polkitguard scan --watch --interval 30s</code></pre>
+            </div>
+        </section>
+
+        <section style="text-align:center; margin:3rem 0;">
+            <h2>Get Started</h2>
+            <div style="display:flex; gap:1rem; justify-content:center; margin-top:2rem;">
+                <a href="https://github.com/Ghostalex07/PolkitGuard" class="btn"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://github.com/Ghostalex07/PolkitGuard/releases" class="btn btn-outline">Download</a>
+                <a href="https://github.com/Ghostalex07/PolkitGuard/discussions" class="btn btn-outline">Community</a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><i class="fas fa-shield-halved"></i> PolkitGuard v1.17.0 - Security scanner for Linux Polkit policies</p>
+        <p style="margin-top:1rem; opacity:0.7;">MIT License - Maintained by the PolkitGuard Team</p>
+    </footer>
+</body>
+</html>

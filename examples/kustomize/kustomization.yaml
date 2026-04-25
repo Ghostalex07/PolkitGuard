@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - deployment.yaml
+  - service.yaml
+  - cronjob.yaml
+
+namespace: polkitguard
+
+commonLabels:
+  app: polkitguard
+  version: "1.17.0"
+
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: ghostalex07/polkitguard:1.17.0
+    target:
+      kind: Deployment
+
+configMapGenerator:
+  - name: polkitguard-config
+    literals:
+      - SCAN_PATHS=/etc/polkit-1,/usr/share/polkit-1
+      - SEVERITY_FILTER=medium
+      - OUTPUT_FORMAT=json
+      - VERSION=1.17.0
+    behavior: replace
+
+images:
+  - name: ghostalex07/polkitguard
+    newTag: "1.17.0"
+
+replicas:
+  - name: polkitguard
+    count: 1

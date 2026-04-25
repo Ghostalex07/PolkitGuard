@@ -2,6 +2,23 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
+## [1.18.0] - Ultimate Release
+
+### Added
+- 30 new detection rules (Azure Arc, GKE, EKS, XFCE, MATE, Cinnamon, desktop)
+- Helm chart (examples/helm/)
+- Kustomize overlay (examples/kustomize/)
+- Operator SDK (internal/operator/)
+- GitHub Pages website (docs/index.html)
+- Test coverage improvements
+- Homebrew tap (packaging/homebrew/)
+- Snap package (packaging/snap/)
+- Chef cookbook
+
+### Changed
+- Version bump to 1.18.0
+- Total detection rules: 139
+
 ## [1.17.0] - Ultimate Release
 
 ### Added
