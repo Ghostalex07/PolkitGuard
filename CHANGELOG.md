@@ -34,6 +34,15 @@ All notable changes to PolkitGuard will be documented in this file.
 - Multi-command CLI (cmd/polkitguard/main.go)
 - Tests for all new packages
 
+### Cross-Language Integrations
+- Python package (integrations/python/)
+- JavaScript/TypeScript npm package (integrations/node/)
+- Rust crate (integrations/rust/)
+- Java Maven package (integrations/java/)
+- Ruby gem (integrations/ruby/)
+- PHP package (integrations/php/)
+- Shell scripts (integrations/shell/)
+
 ### Changed
 - Version bump to 1.18.0
 - Total detection rules: 139

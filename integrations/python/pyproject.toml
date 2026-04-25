@@ -1,0 +1,15 @@
+{
+  "name": "polkitguard",
+  "version": "1.18.0",
+  "description": "Security scanner for Linux Polkit policies",
+  "main": "dist/polkitguard-1.18.0-py3-none-any.whl",
+  "scripts": {
+    "build": "python -m build",
+    "test": "pytest",
+    "install": "pip install ."
+  },
+  "build-system": {
+    "requires": ["setuptools>=45", "wheel"],
+    "build-backend": "setuptools.build_meta"
+  }
+}

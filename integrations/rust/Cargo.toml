@@ -1,0 +1,34 @@
+[package]
+name = "polkitguard"
+version = "1.18.0"
+edition = "2021"
+description = "Security scanner for Linux Polkit policies"
+authors = ["Ghostalex07"]
+license = "MIT"
+repository = "https://github.com/Ghostalex07/PolkitGuard"
+keywords = ["polkit", "security", "linux", "scanner"]
+categories = ["security", "system-programming"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.0", features = ["full"] }
+thiserror = "1.0"
+log = "0.4"
+env_logger = "0.10"
+
+[dependencies.reqwest]
+version = "0.11"
+features = ["json"]
+optional = true
+
+[dev-dependencies]
+tokio-test = "0.4"
+
+[[bin]]
+name = "polkitguard"
+path = "src/main.rs"
+
+[lib]
+name = "polkitguard"
+path = "src/lib.rs"

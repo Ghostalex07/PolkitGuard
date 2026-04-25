@@ -1,0 +1,46 @@
+{
+  "name": "polkitguard",
+  "version": "1.18.0",
+  "description": "Security scanner for Linux Polkit policies",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "bin": {
+    "polkitguard": "./bin/cli.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prepublish": "npm run build"
+  },
+  "keywords": [
+    "polkit",
+    "security",
+    "linux",
+    "scanner",
+    "audit"
+  ],
+  "author": "Ghostalex07",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ghostalex07/PolkitGuard.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  }
+}

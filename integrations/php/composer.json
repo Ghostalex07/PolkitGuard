@@ -1,0 +1,28 @@
+{
+    "name": "ghostalex07/polkitguard",
+    "description": "Security scanner for Linux Polkit policies",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "PolkitGuard\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ghostalex07",
+            "email": "ghostalex07@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "minimum-stability": "stable"
+}
