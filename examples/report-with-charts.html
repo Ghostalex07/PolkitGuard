@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>PolkitGuard Report with Charts</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+	<style>
+		.stats { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+		.stat { padding: 15px 25px; border-radius: 8px; color: white; text-align: center; font-weight: bold; }
+		.critical { background: #dc3545; }
+		.high { background: #6f42c1; }
+		.medium { background: #ffc107; color: #333; }
+		.low { background: #17a2b8; }
+		.chart-box { width: 400px; margin: 30px auto; }
+		.finding { margin: 10px 0; padding: 10px; border-left: 4px solid #ccc; background: #f5f5f5; }
+		.finding.critical { border-color: #dc3545; }
+		.finding.high { border-color: #6f42c1; }
+		.finding.medium { border-color: #ffc107; }
+		.finding.low { border-color: #17a2b8; }
+	</style>
+</head>
+<body>
+	<h1>PolkitGuard Security Report</h1>
+	<div class="stats">
+		<div class="stat critical">Critical: <span id="crit">0</span></div>
+		<div class="stat high">High: <span id="high">0</span></div>
+		<div class="stat medium">Medium: <span id="med">0</span></div>
+		<div class="stat low">Low: <span id="low">0</span></div>
+	</div>
+	<div class="chart-box">
+		<canvas id="severityChart"></canvas>
+	</div>
+	<div id="findings"></div>
+	<script>
+		const data = { critical: 0, high: 0, medium: 0, low: 0 };
+		document.getElementById('crit').textContent = data.critical;
+		document.getElementById('high').textContent = data.high;
+		document.getElementById('med').textContent = data.medium;
+		document.getElementById('low').textContent = data.low;
+		new Chart(document.getElementById('severityChart').getContext('2d'), {
+			type: 'doughnut',
+			data: {
+				labels: ['Critical', 'High', 'Medium', 'Low'],
+				datasets: [{
+					data: [data.critical, data.high, data.medium, data.low],
+					backgroundColor: ['#dc3545', '#6f42c1', '#ffc107', '#17a2b8']
+				}]
+			},
+			options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+		});
+	</script>
+</body>
+</html>

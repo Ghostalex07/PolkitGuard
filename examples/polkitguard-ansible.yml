@@ -1,0 +1,143 @@
+---
+- name: PolkitGuard Security Scanning
+  hosts: all
+  become: yes
+  vars:
+    polkitguard_version: "1.14.0"
+    polkitguard_install_dir: /usr/local/bin
+    polkitguard_scan_paths:
+      - /etc/polkit-1
+      - /usr/share/polkit-1
+    polkitguard_severity: high
+    polkitguard_webhook_url: ""
+    polkitguard_cron_enabled: true
+    polkitguard_cron_schedule: "daily"
+
+  tasks:
+    - name: Ensure polkit directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /etc/polkit-1/rules.d
+        - /etc/polkit-1/localauthority
+        - /var/log/polkitguard
+
+    - name: Install PolkitGuard
+      get_url:
+        url: "https://github.com/Ghostalex07/PolkitGuard/releases/download/v{{ polkitguard_version }}/polkitguard-{{ ansible_system }}-{{ ansible_architecture }}"
+        dest: "{{ polkitguard_install_dir }}/polkitguard"
+        mode: '0755'
+        force: no
+      when: polkitguard_install_from_binary|default(false)
+
+    - name: Build PolkitGuard from source
+      block:
+        - name: Install Go
+          include_role:
+            name: geerlingguy.go
+
+        - name: Clone PolkitGuard repository
+          git:
+            repo: https://github.com/Ghostalex07/PolkitGuard.git
+            dest: /opt/PolkitGuard
+            version: "v{{ polkitguard_version }}"
+            force: yes
+
+        - name: Build PolkitGuard
+          make:
+            chdir: /opt/PolkitGuard
+            target: build
+          ignore_errors: yes
+
+        - name: Install PolkitGuard binary
+          copy:
+            src: /opt/PolkitGuard/polkitguard
+            dest: "{{ polkitguard_install_dir }}/polkitguard"
+            mode: '0755'
+            remote_src: yes
+      when: not polkitguard_install_from_binary|default(false)
+
+    - name: Run PolkitGuard scan
+      command: |
+        {{ polkitguard_install_dir }}/polkitguard
+        --path {{ polkitguard_scan_paths | join(',') }}
+        --severity {{ polkitguard_severity }}
+        --format json
+        --output /var/log/polkitguard/scan-{{ ansible_date_time.iso8601 | regex_replace('[^\d]','') }}.json
+        --no-color
+      register: scan_result
+      changed_when: scan_result.rc != 0
+      failed_when: scan_result.rc >= 4
+
+    - name: Send webhook notification
+      uri:
+        url: "{{ polkitguard_webhook_url }}"
+        method: POST
+        body: "{{ scan_result.stdout }}"
+        body_format: json
+        validate_certs: no
+      when: polkitguard_webhook_url != ""
+      ignore_errors: yes
+
+    - name: Setup cron job
+      cron:
+        name: polkitguard-scan
+        job: |
+          {{ polkitguard_install_dir }}/polkitguard
+          --path {{ polkitguard_scan_paths | join(',') }}
+          --severity {{ polkitguard_severity }}
+          --format json
+          --output /var/log/polkitguard/scan-$(date +\%Y\%m\%d-\%H\%M\%S).json
+        hour: 2
+        minute: 0
+        state: present
+      when: polkitguard_cron_enabled|default(false)
+
+    - name: Check for critical findings
+      debug:
+        msg: "CRITICAL SECURITY ISSUES FOUND - Immediate action required!"
+      when: scan_result.rc >= 4
+
+    - name: Check for high findings
+      debug:
+        msg: "High severity findings detected - Review required"
+      when: scan_result.rc == 3
+
+    - name: Generate security report
+      template:
+        src: report.html.j2
+        dest: /var/www/html/polkitguard-report.html
+      when: polkitguard_http_report|default(false)
+      ignore_errors: yes
+
+- name: PolkitGuard remediation
+  hosts: all
+  become: yes
+  vars:
+    fix_rules: []
+
+  tasks:
+    - name: Backup polkit rules
+      copy:
+        remote_src: yes
+        src: "{{ item }}"
+        dest: "/var/backups/polkit-{{ ansible_date_time.iso8601 }}/"
+      loop:
+        - /etc/polkit-1/rules.d
+        - /usr/share/polkit-1/rules.d
+      ignore_errors: yes
+      when: fix_rules|length > 0
+
+    - name: Apply remediation for critical rules
+      lineinfile:
+        path: "{{ item.file }}"
+        regexp: "{{ item.old_pattern }}"
+        line: "{{ item.new_line }}"
+        state: present
+      loop:
+        - { file: /etc/polkit-1/rules.d/50-local.rules, old_pattern: 'result_any=yes', new_line: 'result_any=auth_admin_keep' }
+        - { file: /etc/polkit-1/rules.d/50-local.rules, old_pattern: 'unix-user:\*', new_line: 'unix-user:admin' }
+      when: fix_rules|length > 0
+      ignore_errors: yes

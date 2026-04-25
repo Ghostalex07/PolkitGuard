@@ -811,6 +811,104 @@ func getDetectionRules() []DetectionRule {
 				return strings.Contains(rule.Identity, "unix-group:*")
 			},
 		},
+		{
+			ID:             "CRIT-016",
+			Severity:       models.SeverityCritical,
+			Description:    "GCP Compute Engine access",
+			Impact:         "Can access GCP instances",
+			Recommendation: "Restrict GCP access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "gcp") &&
+					strings.Contains(rule.Action, "compute")
+			},
+		},
+		{
+			ID:             "CRIT-017",
+			Severity:       models.SeverityCritical,
+			Description:    "Azure VM access",
+			Impact:         "Can access Azure VMs",
+			Recommendation: "Restrict Azure access",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "azure") &&
+					strings.Contains(rule.Action, "vm")
+			},
+		},
+		{
+			ID:             "HIGH-019",
+			Severity:       models.SeverityHigh,
+			Description:    "Containerd privileged",
+			Impact:         "Can run privileged containers",
+			Recommendation: "Restrict containerd",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "containerd") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "HIGH-020",
+			Severity:       models.SeverityHigh,
+			Description:    "CRI-O container access",
+			Impact:         "Can manage CRI-O containers",
+			Recommendation: "Restrict CRI-O",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "cri-o") ||
+					strings.Contains(rule.Action, "crio")
+			},
+		},
+		{
+			ID:             "HIGH-021",
+			Severity:       models.SeverityHigh,
+			Description:    "AWS ECS container access",
+			Impact:         "Can manage ECS tasks",
+			Recommendation: "Restrict ECS",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "ecs") &&
+					strings.Contains(rule.Action, "aws")
+			},
+		},
+		{
+			ID:             "MED-014",
+			Severity:       models.SeverityMedium,
+			Description:    "systemd-swamp daemon",
+			Impact:         "Can manage systemd services",
+			Recommendation: "Restrict systemd",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "systemd-") &&
+					!strings.Contains(rule.Action, "org.freedesktop")
+			},
+		},
+		{
+			ID:             "MED-015",
+			Severity:       models.SeverityMedium,
+			Description:    "DBus activation",
+			Impact:         "Can activate DBus services",
+			Recommendation: "Restrict DBus",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "dbus") &&
+					rule.ResultAny == "yes"
+			},
+		},
+		{
+			ID:             "LOW-014",
+			Severity:       models.SeverityLow,
+			Description:    "Unused action field",
+			Impact:         "Redundant rule",
+			Recommendation: "Remove unused rules",
+			Check: func(rule models.PolkitRule) bool {
+				return strings.Contains(rule.Action, "unused") ||
+					strings.Contains(rule.Action, "obsolete")
+			},
+		},
+		{
+			ID:             "LOW-015",
+			Severity:       models.SeverityLow,
+			Description:    "Incomplete rule",
+			Impact:         "Rule incomplete",
+			Recommendation: "Complete the rule",
+			Check: func(rule models.PolkitRule) bool {
+				return rule.Action != "" && rule.Identity == "" && rule.ResultAny == ""
+			},
+		},
 	}
 }
 

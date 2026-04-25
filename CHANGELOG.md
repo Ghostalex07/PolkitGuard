@@ -2,7 +2,21 @@
 
 All notable changes to PolkitGuard will be documented in this file.
 
-## [1.14.0] - Current Release
+## [1.15.0] - Current Release
+
+### Added
+- 10 new detection rules (cloud/container: GCP, Azure, containerd, CRI-O, AWS ECS)
+- TUI interactivo (internal/tui)
+- Grafana dashboard (examples/grafana-dashboard.json)
+- Ansible playbook (examples/polkitguard-ansible.yml)
+- HTML report con charts (examples/report-with-charts.html)
+- Fuzzing tests подготовка
+
+### Changed
+- Version bump to 1.15.0
+- Total detection rules: 74
+
+## [1.14.0] - Previous Release
 
 ### Added
 - 10 new detection rules (cloud/container specific: AWS EC2, Kubernetes, Docker, Podman)
