@@ -14,6 +14,22 @@ All notable changes to PolkitGuard will be documented in this file.
 - Homebrew tap (packaging/homebrew/)
 - Snap package (packaging/snap/)
 - Chef cookbook
+- Policy comparison tool (internal/policy/comparison.go)
+- Config backup/restore system (internal/backup/backup.go)
+- Scoop package for Windows (packaging/scoop/)
+- Security Policy Guide (docs/SECURITY.md)
+- Additional integration tests
+- Risk scoring engine (internal/risk/score.go)
+- Policy diff/merge tool (internal/diff/policy_diff.go)
+- Auto-remediation generator (internal/remediation/generator.go)
+- Markdown report format (internal/report/markdown.go)
+- XML/Excel format (internal/report/xml.go)
+- Config validator CLI (cmd/validate/validate.go)
+- Policy templates library (internal/templates/library.go)
+- Attack surface analyzer (internal/analyzer/surface.go)
+- Trend analysis (internal/trend/analysis.go)
+- Config generator (internal/generator/generator.go)
+- Finding model expanded with RuleID, Title, Description, Rule pointer
 
 ### Changed
 - Version bump to 1.18.0

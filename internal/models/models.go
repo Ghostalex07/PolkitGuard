@@ -45,11 +45,15 @@ type Finding struct {
 	Severity       Severity
 	File           string
 	RuleName       string
+	RuleID         string
+	Title          string
+	Description    string
 	Message        string
 	Impact         string
 	Recommendation string
 	Score          int
 	CVE            string
+	Rule           *PolkitRule
 }
 
 func (f Finding) String() string {

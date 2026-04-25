@@ -1,0 +1,24 @@
+{
+    "version": "1.18.0",
+    "description": "Security scanner for Linux Polkit policies",
+    "homepage": "https://github.com/Ghostalex07/PolkitGuard",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Ghostalex07/PolkitGuard/releases/download/v1.18.0/polkitguard-windows-amd64.exe",
+            "hash": ""
+        }
+    },
+    "bin": "polkitguard.exe",
+    "checkver": {
+        "url": "https://api.github.com/repos/Ghostalex07/PolkitGuard/releases/latest",
+        "jsonpath": "$.tag_name"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/Ghostalex07/PolkitGuard/releases/download/v$version/polkitguard-windows-amd64.exe"
+            }
+        }
+    }
+}
